@@ -1,5 +1,4 @@
 use dioxus::prelude::*;
-use crate::schema::page::Page;
 use super::*;
 
 #[derive(Clone, Debug)]

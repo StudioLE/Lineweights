@@ -1,7 +1,6 @@
-use std::ops::Deref;
 use super::*;
 use dioxus::prelude::*;
-use crate::schema::{Page, State};
+use crate::schema::*;
 
 /// App is the main component of our app. Components are the building blocks of dioxus apps.
 /// Each component is a function that takes some props and returns an Element. In this case,
@@ -35,16 +34,14 @@ pub(crate) fn App() -> Element {
             }
         }
         div { class: "container is-max-tablet",
-            section { class: "section is-large",
-                if *page == Page::Import {
-                    Import {}
-                }
-                if *page == Page::Chart {
-                    Table {}
-                }
-                if *page == Page::Table {
-                    Table {}
-                }
+            if *page == Page::Import {
+                Import {}
+            }
+            if *page == Page::Chart {
+                Chart {}
+            }
+            if *page == Page::Table {
+                Table {}
             }
         }
     }

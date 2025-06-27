@@ -13,7 +13,7 @@ pub enum ImportError {
 
 #[allow(clippy::absolute_paths)]
 #[component]
-pub fn Import() -> Element {    
+pub fn Import() -> Element {
     let mut state = use_context::<State>();
     let on_file_changed = move |event| async move {
         match read_file(event).await {
@@ -25,7 +25,7 @@ pub fn Import() -> Element {
                 );
                 state.shots.set(shots);
                 state.weights.set(weights);
-                state.page.set(Page::Table);
+                state.page.set(Page::Chart);
             }
             Err(error) => {
                 warn!("Failed to read file: {error:?}");
@@ -92,7 +92,7 @@ async fn read_file(evt: Event<FormData>) -> Result<(Vec<ShotData>, Vec<WeightDat
                     shots.push(shot);
                 }
                 if let Some(weight) = weight {
-                    weights.push(weight);                    
+                    weights.push(weight);
                 }
             }
             Err(error) => {
