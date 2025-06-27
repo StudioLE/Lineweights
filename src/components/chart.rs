@@ -14,7 +14,9 @@ pub fn Chart() -> Element {
     let total_days = (max_date - min_date).num_days();
     let (min_weight, max_weight) = get_weight_range(&entries)?;
     let weight_span = max_weight - min_weight;
-    let view_box = format!("-1 {} {} {}", min_weight.floor() - 1.0, total_days + 2, weight_span.ceil() + 2.0);
+    let view_box = "-0.1 -1.1 1.2 1.2";
+    let x_scale = 1.0 / total_days as f32;
+    let y_scale = (1.0 / weight_span) * -1.0;
     rsx! {
         svg {
             view_box: view_box,
@@ -23,9 +25,9 @@ pub fn Chart() -> Element {
             for entry in entries {
                 if let Some(weight) = entry.weight {
                     circle {
-                        cx: (max_date - entry.date).num_days(),
-                        cy: weight,
-                        r: if entry.shot.is_some() { 0.4 } else { 0.3 },
+                        cx: (entry.date - min_date).num_days() as f32 * x_scale,
+                        cy: (weight - min_weight) * y_scale,
+                        r: if entry.shot.is_some() { 0.0075 } else { 0.005 },
                         fill: get_color(entry.shot)
                     }
                 }
