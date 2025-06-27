@@ -1,8 +1,10 @@
 use chrono::{NaiveDate, NaiveTime};
+use regex::Regex;
 use serde::Deserialize;
+use crate::schema::*;
 
 #[allow(dead_code)]
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct ShotsyData {
     #[serde(rename = "Date (UTC)")]
     pub date: Option<NaiveDate>,
@@ -80,4 +82,56 @@ pub struct ShotsyData {
 
     #[serde(rename = "Migraine")]
     pub migraine: Option<String>,
+}
+
+impl ShotsyData {
+    pub(crate) fn to_shot(self) -> Option<ShotData> {
+        Some(ShotData {
+            date: self.date?,
+            time: self.time?,
+            medication: get_medication(self.shot.clone())?,
+            dose: get_dose(self.shot)?,
+            site: self.site,
+            notes: self.shot_notes,
+        })
+    }
+
+    pub(crate) fn to_weight(self) -> Option<WeightData> {
+        Some(WeightData {
+            date: self.date?,
+            weight: self.weight?,
+        })
+    }
+}
+
+fn get_medication(input: Option<String>) -> Option<Medication> {
+    input?
+        .starts_with("Mounjaro")
+        .then_some(Medication::Mounjaro)
+}
+
+fn get_dose(input: Option<String>) -> Option<f32> {
+    let regex = Regex::new(r" (\d+\.\d+) mg$").expect("Regex should be valid");
+    let input = input?;
+    let value = regex.captures(&input)?.get(1)?.as_str();
+    value.parse().ok()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn _get_dose() {
+        assert_eq!(get_dose(Some("Mounjaro® 2.5 mg".to_owned())), Some(2.5));
+        assert_eq!(get_dose(Some("Mounjaro® 2.9 mg".to_owned())), Some(2.9));
+        assert_eq!(
+            get_dose(Some("Mounjaro® 3.33333 mg".to_owned())),
+            Some(3.33333)
+        );
+        assert_eq!(get_dose(Some("Mounjaro® 5.0 mg".to_owned())), Some(5.0));
+        assert_eq!(get_dose(Some("Mounjaro® 7.5 mg".to_owned())), Some(7.5));
+        assert_eq!(get_dose(Some("Mounjaro® 10.0 mg".to_owned())), Some(10.0));
+        assert_eq!(get_dose(Some("Mounjaro® 12.5 mg".to_owned())), Some(12.5));
+        assert_eq!(get_dose(Some("Mounjaro® 15.0 mg".to_owned())), Some(15.0));
+    }
 }

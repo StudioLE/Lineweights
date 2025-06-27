@@ -1,5 +1,6 @@
 use super::*;
 use dioxus::prelude::*;
+use crate::schema::State;
 
 /// App is the main component of our app. Components are the building blocks of dioxus apps.
 /// Each component is a function that takes some props and returns an Element. In this case,
@@ -9,6 +10,7 @@ use dioxus::prelude::*;
 /// and autocomplete
 #[component]
 pub(crate) fn App() -> Element {
+    use_context_provider(|| State::new());
     rsx! {
         document::Link { rel: "icon", href: asset!("/assets/favicon.ico") }
         document::Link { rel: "stylesheet", href: asset!("/node_modules/bulma/css/bulma.css") }

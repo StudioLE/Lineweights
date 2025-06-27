@@ -13,17 +13,18 @@ pub enum ImportError {
 
 #[allow(clippy::absolute_paths)]
 #[component]
-pub fn Import() -> Element {
-    let mut file_content: Signal<Data> = use_signal(Data::new);
+pub fn Import() -> Element {    
+    let mut state = use_context::<State>();
     let on_file_changed = move |event| async move {
         match read_file(event).await {
-            Ok(data) => {
+            Ok((shots, weights)) => {
                 info!(
                     "Loaded {} shots and {} weights",
-                    data.shots.len(),
-                    data.weights.len()
+                    shots.len(),
+                    weights.len()
                 );
-                file_content.set(data);
+                state.shots.set(shots);
+                state.weights.set(weights);
             }
             Err(error) => {
                 warn!("Failed to read file: {error:?}");
@@ -60,7 +61,7 @@ pub fn Import() -> Element {
     }
 }
 
-async fn read_file(evt: Event<FormData>) -> Result<Data, ImportError> {
+async fn read_file(evt: Event<FormData>) -> Result<(Vec<ShotData>, Vec<WeightData>), ImportError> {
     let Some(file_engine) = evt.files() else {
         return Err(NoFileEngine);
     };
@@ -76,12 +77,21 @@ async fn read_file(evt: Event<FormData>) -> Result<Data, ImportError> {
         return Err(FailedToRead);
     };
     let mut reader = csv::Reader::from_reader(content.as_bytes());
-    let mut data = Data::new();
+    let mut shots = Vec::new();
+    let mut weights = Vec::new();
     for (i, result) in reader.deserialize::<ShotsyData>().enumerate() {
         match result {
             Ok(shotsy) => {
-                if !&data.add(&shotsy) {
-                    warn!("Failed to add shotsy");
+                let shot = shotsy.clone().to_shot();
+                let weight = shotsy.to_weight();
+                if shot.is_none() && weight.is_none() {
+                    warn!("Row did not contain shot or weight data.");
+                }
+                if let Some(shot) = shot {
+                    shots.push(shot);
+                }
+                if let Some(weight) = weight {
+                    weights.push(weight);                    
                 }
             }
             Err(error) => {
@@ -89,5 +99,5 @@ async fn read_file(evt: Event<FormData>) -> Result<Data, ImportError> {
             }
         }
     }
-    Ok(data)
+    Ok((shots, weights))
 }
