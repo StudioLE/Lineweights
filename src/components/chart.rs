@@ -10,23 +10,17 @@ use ChartError::*;
 pub fn Chart() -> Element {
     let state = use_context::<State>();
     let entries = state.entries.read().clone();
-    let (min_date, max_date) = get_date_range(&entries)?;
-    let total_days = (max_date - min_date).num_days();
-    let (min_weight, max_weight) = get_weight_range(&entries)?;
-    let weight_span = max_weight - min_weight;
-    let view_box = "-0.1 -1.1 1.2 1.2";
-    let x_scale = 1.0 / total_days as f32;
-    let y_scale = (1.0 / weight_span) * -1.0;
+    let data = Data::new(entries).ok_or(InsufficientData)?;
     rsx! {
         svg {
-            view_box: view_box,
+            view_box: "-0.1 -0.1 1.2 1.2",
             preserve_aspect_ratio: "xMidYMid slice",
             role: "img",
-            for entry in entries {
+            for entry in data.entries.clone() {
                 if let Some(weight) = entry.weight {
                     circle {
-                        cx: (entry.date - min_date).num_days() as f32 * x_scale,
-                        cy: (weight - min_weight) * y_scale,
+                        cx: data.get_x(entry.date),
+                        cy: data.get_y(weight),
                         r: if entry.shot.is_some() { 0.0075 } else { 0.005 },
                         fill: get_color(entry.shot)
                     }
@@ -36,26 +30,68 @@ pub fn Chart() -> Element {
     }
 }
 
-fn get_date_range(entries: &[Entry]) -> Result<(NaiveDate, NaiveDate), ChartError> {
+struct Data {
+    entries: Vec<Entry>,
+    min_date: NaiveDate,
+    max_date: NaiveDate,
+    min_weight: f32,
+    max_weight: f32,
+    x_scale: f32,
+    y_scale: f32,
+}
+
+impl Data {
+    fn new(entries: Vec<Entry>) -> Option<Self> {
+        let (min_date, max_date) = get_date_range(&entries)?;
+        let total_days = (max_date - min_date).num_days();
+        let (min_weight, max_weight) = get_weight_range(&entries)?;
+        let weight_span = max_weight - min_weight;
+        let x_scale = 1.0 / total_days as f32;
+        let y_scale = 1.0 / weight_span;
+        Some(Self {
+            entries,
+            min_date,
+            max_date,
+            min_weight,
+            max_weight,
+            x_scale,
+            y_scale,
+        })
+    }
+
+    fn get_day(&self, date: NaiveDate) -> usize {
+        (date - self.min_date).num_days() as usize
+    }
+
+    fn get_x(&self, date: NaiveDate) -> f32 {
+        self.get_day(date) as f32 * self.x_scale
+    }
+
+    fn get_y(&self, weight: f32) -> f32 {
+        1.0 - (weight - self.min_weight) * self.y_scale
+    }
+}
+
+fn get_date_range(entries: &[Entry]) -> Option<(NaiveDate, NaiveDate)> {
     let mut dates: Vec<_> = entries.iter().map(|x| x.date).collect();
     if dates.len() < 2 {
-        Err(InsufficientData)?;
+        return None;
     }
     dates.sort();
     let min = *dates.first().expect("should be at least 2 entries");
     let max = *dates.last().expect("should be at least 2 entries");
-    Ok((min, max))
+    Some((min, max))
 }
 
-fn get_weight_range(entries: &[Entry]) -> Result<(f32, f32), ChartError> {
+fn get_weight_range(entries: &[Entry]) -> Option<(f32, f32)> {
     let mut weights: Vec<_> = entries.iter().filter_map(|x| x.weight).collect();
     if weights.len() < 2 {
-        Err(InsufficientData)?;
+        return None;
     }
     weights.sort_by(|a, b| a.partial_cmp(b).expect("weights should be comparable"));
     let min = *weights.first().expect("should be at least 2 weights");
     let max = *weights.last().expect("should be at least 2 weights");
-    Ok((min, max))
+    Some((min, max))
 }
 
 fn get_color(shot: Option<Shot>) -> String {
