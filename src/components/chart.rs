@@ -1,5 +1,6 @@
 use crate::schema::*;
-use chrono::NaiveDate;
+use chrono::{Duration, NaiveDate};
+use dioxus::logger::tracing::{trace, warn};
 use dioxus::prelude::*;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
@@ -18,6 +19,14 @@ pub fn Chart() -> Element {
             role: "img",
             for entry in data.entries.clone() {
                 if let Some(weight) = entry.weight {
+                    circle {
+                        cx: data.get_x(entry.date),
+                        cy: data.get_y(weight),
+                        r: 0.0025,
+                        fill: "#1f2937"
+                    }
+                }
+                if let Some(weight) = data.get_7_day_average(entry.date) {
                     circle {
                         cx: data.get_x(entry.date),
                         cy: data.get_y(weight),
@@ -69,6 +78,25 @@ impl Data {
 
     fn get_y(&self, weight: f32) -> f32 {
         1.0 - (weight - self.min_weight) * self.y_scale
+    }
+
+    fn get_7_day_average(&self, date: NaiveDate) -> Option<f32> {
+        let weights: Vec<_> = self
+            .entries
+            .iter()
+            .filter(|x| {
+                let days = (x.date - date).num_days();
+                days >= -3 && days <= 3
+            })
+            .filter_map(|x| x.weight)
+            .collect();
+        if weights.is_empty() {
+            warn!("no weights found for date {}", date);
+            return None;
+        }
+        trace!("found {} weights for date {}", weights.len(), date);
+        let sum: f32 = weights.iter().sum();
+        Some(sum / weights.len() as f32)
     }
 }
 
