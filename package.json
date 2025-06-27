@@ -1,0 +1,15 @@
+{
+  "name": "linewights",
+  "version": "1.0.0",
+  "description": "Your new jumpstart project includes basic organization with an organized `assets` folder and a `components` folder. If you chose to develop with the router feature, you will also have a `views` folder.",
+  "license": "",
+  "author": "",
+  "type": "commonjs",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bulma": "^1.0.4"
+  }
+}

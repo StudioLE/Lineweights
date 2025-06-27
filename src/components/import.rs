@@ -31,11 +31,31 @@ pub fn Import() -> Element {
         }
     };
     rsx! {
-        input {
-            r#type: "file",
-            accept: ".csv",
-            multiple: false,
-            onchange: on_file_changed
+        section { class: "section is-large",
+            h1 { class: "title", "Import data from Shotsy" }
+            h2 { class: "subtitle",
+                "This app is designed to visualize the data you already have stored in Shotsy."
+            }
+            ul { class: "block",
+                li { "Open the Shotsy app" }
+                li {"Go to ", code { "Settings > Export Data > Export Data to CSV" } }
+                li { "Save the ", code { "shotsy_export.csv" }, " file to your device" }
+                li { "Import it with the button below" }
+            }
+            div { class: "file",
+                label { class: "file-label",
+                    input {
+                        class: "file-input",
+                        r#type: "file",
+                        accept: ".csv",
+                        multiple: false,
+                        onchange: on_file_changed
+                    }
+                    span { class: "file-cta",
+                        span { class: "file-label", " Choose a file… " }
+                    }
+                }
+            }
         }
     }
 }
