@@ -6,42 +6,30 @@ use dioxus::prelude::*;
 pub fn Table() -> Element {
     let state = use_context::<State>();
     rsx! {
-        div { class: "columns",
-            div { class: "column",
-                h3 { class: "title", "Shots" }
-                table { class: "table is-fullwidth has-text-right",
-                    thead {
-                        tr {
-                            th { "Date" }
-                            th { "Time" }
-                            th { "Dose" }
-                        }
-                    }
-                    tbody {
-                        for shot in state.shots.read().iter() {
-                            tr {
-                                td { "{shot.date}" }
-                                td { "{shot.time}" }
-                                td { "{shot.dose:.2}" }
-                            }
-                        }
-                    }
+        table { class: "table is-fullwidth",
+            thead {
+                tr {
+                    th { "Date" }
+                    th { "Weight" }
+                    th { "Shot" }
                 }
             }
-            div { class: "column",
-                h3 { class: "title", "Weights" }
-                table { class: "table is-fullwidth has-text-right",
-                    thead {
-                        tr {
-                            th { "Date" }
-                            th { "Weight" }
+            tbody {
+                for entry in state.entries.read().iter() {
+                    tr {
+                        td { "{entry.date}" }
+                        td { class: "has-text-right",
+                            if let Some(weight) = &entry.weight {
+                                "{weight:.2}"
+                            } else {
+                                ""
+                            }
                         }
-                    }
-                    tbody {
-                        for weight in state.weights.read().iter() {
-                            tr {
-                                td { "{weight.date}" }
-                                td { "{weight.weight:.2}" }
+                        td {
+                            if let Some(shot) = &entry.shot {
+                                "{shot.dose:.2} mg at {shot.time}"
+                            } else {
+                                ""
                             }
                         }
                     }

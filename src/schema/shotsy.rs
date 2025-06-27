@@ -3,6 +3,8 @@ use regex::Regex;
 use serde::Deserialize;
 use crate::schema::*;
 
+const LB_TO_KG: f32 = 0.45359237;
+
 #[allow(dead_code)]
 #[derive(Clone, Debug, Deserialize)]
 pub struct ShotsyData {
@@ -85,21 +87,21 @@ pub struct ShotsyData {
 }
 
 impl ShotsyData {
-    pub(crate) fn to_shot(self) -> Option<ShotData> {
-        Some(ShotData {
+    pub(crate) fn to_entry(self) -> Option<Entry> {
+        Some(Entry {
             date: self.date?,
+            weight: self.weight.and_then(|x| Some(x * LB_TO_KG)),
+            shot: self.to_shot()
+        })
+    }
+    
+    fn to_shot(self) -> Option<Shot> {
+        Some(Shot {
             time: self.time?,
             medication: get_medication(self.shot.clone())?,
             dose: get_dose(self.shot)?,
             site: self.site,
             notes: self.shot_notes,
-        })
-    }
-
-    pub(crate) fn to_weight(self) -> Option<WeightData> {
-        Some(WeightData {
-            date: self.date?,
-            weight: self.weight?,
         })
     }
 }

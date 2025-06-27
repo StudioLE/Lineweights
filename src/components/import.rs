@@ -17,14 +17,8 @@ pub fn Import() -> Element {
     let mut state = use_context::<State>();
     let on_file_changed = move |event| async move {
         match read_file(event).await {
-            Ok((shots, weights)) => {
-                info!(
-                    "Loaded {} shots and {} weights",
-                    shots.len(),
-                    weights.len()
-                );
-                state.shots.set(shots);
-                state.weights.set(weights);
+            Ok(entries) => {
+                state.entries.set(entries);
                 state.page.set(Page::Chart);
             }
             Err(error) => {
@@ -62,7 +56,7 @@ pub fn Import() -> Element {
     }
 }
 
-async fn read_file(evt: Event<FormData>) -> Result<(Vec<ShotData>, Vec<WeightData>), ImportError> {
+async fn read_file(evt: Event<FormData>) -> Result<Vec<Entry>, ImportError> {
     let Some(file_engine) = evt.files() else {
         return Err(NoFileEngine);
     };
@@ -78,21 +72,14 @@ async fn read_file(evt: Event<FormData>) -> Result<(Vec<ShotData>, Vec<WeightDat
         return Err(FailedToRead);
     };
     let mut reader = csv::Reader::from_reader(content.as_bytes());
-    let mut shots = Vec::new();
-    let mut weights = Vec::new();
+    let mut entries = Vec::new();
     for (i, result) in reader.deserialize::<ShotsyData>().enumerate() {
         match result {
             Ok(shotsy) => {
-                let shot = shotsy.clone().to_shot();
-                let weight = shotsy.to_weight();
-                if shot.is_none() && weight.is_none() {
+                if let Some(entry) = shotsy.to_entry() {
+                    entries.push(entry);
+                } else {
                     warn!("Row did not contain shot or weight data.");
-                }
-                if let Some(shot) = shot {
-                    shots.push(shot);
-                }
-                if let Some(weight) = weight {
-                    weights.push(weight);
                 }
             }
             Err(error) => {
@@ -100,5 +87,5 @@ async fn read_file(evt: Event<FormData>) -> Result<(Vec<ShotData>, Vec<WeightDat
             }
         }
     }
-    Ok((shots, weights))
+    Ok(entries)
 }
