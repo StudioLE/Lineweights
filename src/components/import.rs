@@ -25,6 +25,7 @@ pub fn Import() -> Element {
                 );
                 state.shots.set(shots);
                 state.weights.set(weights);
+                state.page.set(Page::Table);
             }
             Err(error) => {
                 warn!("Failed to read file: {error:?}");
