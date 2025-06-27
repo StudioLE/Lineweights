@@ -1,6 +1,6 @@
 use super::*;
-use dioxus::prelude::*;
 use crate::schema::*;
+use dioxus::prelude::*;
 
 /// App is the main component of our app. Components are the building blocks of dioxus apps.
 /// Each component is a function that takes some props and returns an Element. In this case,
@@ -10,7 +10,7 @@ use crate::schema::*;
 /// and autocomplete
 #[component]
 pub(crate) fn App() -> Element {
-    use_context_provider(|| State::new());
+    use_context_provider(State::new);
     let mut state = use_context::<State>();
     let page = state.page.read();
     rsx! {

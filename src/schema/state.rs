@@ -1,10 +1,10 @@
-use dioxus::prelude::*;
 use super::*;
+use dioxus::prelude::*;
 
 #[derive(Clone, Debug)]
 pub struct State {
     pub entries: Signal<Vec<Entry>>,
-    pub page: Signal<Page>
+    pub page: Signal<Page>,
 }
 
 impl State {

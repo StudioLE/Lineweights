@@ -1,9 +1,9 @@
+use crate::schema::*;
 use chrono::{NaiveDate, NaiveTime};
 use regex::Regex;
 use serde::Deserialize;
-use crate::schema::*;
 
-const LB_TO_KG: f32 = 0.45359237;
+const LB_TO_KG: f32 = 0.453_592_37;
 
 #[allow(dead_code)]
 #[derive(Clone, Debug, Deserialize)]
@@ -90,11 +90,11 @@ impl ShotsyData {
     pub(crate) fn to_entry(self) -> Option<Entry> {
         Some(Entry {
             date: self.date?,
-            weight: self.weight.and_then(|x| Some(x * LB_TO_KG)),
-            shot: self.to_shot()
+            weight: self.weight.map(|x| x * LB_TO_KG),
+            shot: self.to_shot(),
         })
     }
-    
+
     fn to_shot(self) -> Option<Shot> {
         Some(Shot {
             time: self.time?,

@@ -1,5 +1,5 @@
 use crate::schema::*;
-use dioxus::logger::tracing::{info, warn};
+use dioxus::logger::tracing::warn;
 use dioxus::prelude::*;
 use ImportError::*;
 

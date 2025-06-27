@@ -18,44 +18,40 @@ pub fn Chart() -> Element {
         svg {
             view_box: "0 {min_weight} {total_days} {weight_span}",
             preserve_aspect_ratio: "xMidYMid slice",
-            role: "img",            
+            role: "img",
             for entry in entries {
-                if let Some(weight) = entry.weight {                    
+                if let Some(weight) = entry.weight {
                     circle {
                         cx: (max_date - entry.date).num_days(),
                         cy: weight,
                         r: 0.25,
                         fill: "var(--bulma-primary)"
                     }
-                }              
+                }
             }
         }
     }
 }
 
-fn get_date_range(
-    entries: &Vec<Entry>,
-) -> Result<(NaiveDate, NaiveDate), ChartError> {
+fn get_date_range(entries: &[Entry]) -> Result<(NaiveDate, NaiveDate), ChartError> {
     let mut dates: Vec<_> = entries.iter().map(|x| x.date).collect();
     if dates.len() < 2 {
         Err(InsufficientData)?;
     }
     dates.sort();
-    let min = dates.first().expect("should be at least 2 entries").clone();
-    let max = dates.last().expect("should be at least 2 entries").clone();
+    let min = *dates.first().expect("should be at least 2 entries");
+    let max = *dates.last().expect("should be at least 2 entries");
     Ok((min, max))
 }
 
-fn get_weight_range(
-    entries: &Vec<Entry>,
-) -> Result<(f32, f32), ChartError> {
+fn get_weight_range(entries: &[Entry]) -> Result<(f32, f32), ChartError> {
     let mut weights: Vec<_> = entries.iter().filter_map(|x| x.weight).collect();
     if weights.len() < 2 {
         Err(InsufficientData)?;
     }
     weights.sort_by(|a, b| a.partial_cmp(b).expect("weights should be comparable"));
-    let min = weights.first().expect("should be at least 2 weights").clone();
-    let max = weights.last().expect("should be at least 2 weights").clone();
+    let min = *weights.first().expect("should be at least 2 weights");
+    let max = *weights.last().expect("should be at least 2 weights");
     Ok((min, max))
 }
 
@@ -65,6 +61,7 @@ pub enum ChartError {
 }
 
 impl Display for ChartError {
+    #[allow(clippy::absolute_paths)]
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{self:?}")
     }
