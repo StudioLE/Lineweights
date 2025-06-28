@@ -89,7 +89,9 @@ impl ShotsyData {
     pub(crate) fn to_entry(self) -> Option<Entry> {
         Some(Entry {
             date: self.date?,
+            day: None,
             weight: self.weight.map(|x| x * LB_TO_KG),
+            weight_sma: None,
             shot: self.to_shot(),
         })
     }
