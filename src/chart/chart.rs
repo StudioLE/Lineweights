@@ -12,6 +12,20 @@ pub fn Chart() -> Element {
             view_box: "-0.1 -0.1 1.2 1.2",
             preserve_aspect_ratio: "xMidYMid slice",
             role: "img",
+            for pair in entries.windows(2) {
+                if let Some(left) = pair[0].weight_sma {
+                    if let Some(right) = pair[1].weight_sma {
+                        line {
+                            x1: range.get_x(pair[0].date),
+                            y1: range.get_y(left),
+                            x2: range.get_x(pair[1].date),
+                            y2: range.get_y(right),
+                            stroke: "#1f2937",
+                            stroke_width: 0.0035,
+                        }
+                    }
+                }
+            }
             for entry in entries {
                 if let Some(weight_sma) = entry.weight_sma {
                     if let  Some(weight) = entry.weight {
