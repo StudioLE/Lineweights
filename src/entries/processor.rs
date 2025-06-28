@@ -6,32 +6,44 @@ const MOVING_AVERAGE_RANGE: usize = 7;
 pub struct Processor;
 
 impl Processor {
-    pub fn execute(entries: &mut Vec<Entry>, range: &EntryRange) {
-        set_days(entries, &range);
+    pub fn execute(entries: &mut [Entry], range: &EntryRange) {
+        set_days(entries, range);
         set_weight_sma(entries);
     }
 }
 
-fn set_days(entries: &mut Vec<Entry>, range: &EntryRange) {
+fn set_days(entries: &mut [Entry], range: &EntryRange) {
     for entry in entries.iter_mut() {
-        entry.day = Some(range.get_day(entry.date))
+        entry.day = Some(range.get_day(entry.date));
     }
 }
 
-fn set_weight_sma(entries: &mut Vec<Entry>) {
-    let entries_clone = entries.clone();
+fn set_weight_sma(entries: &mut [Entry]) {
+    let entries_clone = entries.to_vec();
     for entry in entries.iter_mut() {
         let day = entry.day.expect("entry should have day set");
-        entry.weight_sma = Some(get_simple_moving_average(&entries_clone, day, MOVING_AVERAGE_RANGE))
+        entry.weight_sma = Some(get_simple_moving_average(
+            &entries_clone,
+            day,
+            MOVING_AVERAGE_RANGE,
+        ));
     }
 }
 
+#[allow(
+    clippy::as_conversions,
+    clippy::cast_possible_wrap,
+    clippy::cast_precision_loss,
+    clippy::cast_sign_loss
+)]
 fn get_simple_moving_average(entries: &[Entry], day: usize, range: usize) -> f32 {
+    let day = day as isize;
+    let range = range as isize;
     let weights: Vec<_> = entries
         .iter()
         .filter(|x| {
             let candidate = x.day.expect("entry should have day set") as isize;
-            candidate >= day as isize - range as isize && candidate <= day as isize
+            candidate >= day - range && candidate <= day
         })
         .filter_map(|x| x.weight)
         .collect();

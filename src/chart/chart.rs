@@ -46,6 +46,7 @@ pub fn Chart() -> Element {
     }
 }
 
+#[allow(clippy::float_cmp)]
 fn get_color(shot: Option<Shot>) -> String {
     let color = if let Some(shot) = shot {
         if shot.dose == 2.5 {

@@ -25,10 +25,10 @@ impl EntryRange {
         }
     }
 
-    pub fn new(entries: &Vec<Entry>) -> Result<EntryRange, EntryRangeError> {
+    pub fn new(entries: &[Entry]) -> Result<EntryRange, EntryRangeError> {
         let mut range = Self::default();
-        range.set_date_range(&entries)?;
-        range.set_weight_range(&entries)?;
+        range.set_date_range(entries)?;
+        range.set_weight_range(entries)?;
         range.set_scales();
         Ok(range)
     }
@@ -55,6 +55,7 @@ impl EntryRange {
         Ok(())
     }
 
+    #[allow(clippy::as_conversions, clippy::cast_precision_loss)]
     fn set_scales(&mut self) {
         let total_days = (self.max_date - self.min_date).num_days();
         let weight_span = self.max_weight - self.min_weight;
@@ -63,9 +64,14 @@ impl EntryRange {
     }
 
     pub fn get_day(&self, date: NaiveDate) -> usize {
-        (date - self.min_date).num_days() as usize
+        usize::try_from((date - self.min_date).num_days()).expect("should not overflow")
     }
 
+    #[allow(
+        clippy::as_conversions,
+        clippy::cast_precision_loss,
+        clippy::cast_sign_loss
+    )]
     pub fn get_x(&self, date: NaiveDate) -> f32 {
         self.get_day(date) as f32 * self.x_scale
     }

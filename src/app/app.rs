@@ -15,7 +15,7 @@ pub(crate) fn App() -> Element {
         document::Link { rel: "icon", href: asset!("/assets/favicon.ico") }
         document::Link { rel: "stylesheet", href: asset!("/node_modules/bulma/css/bulma.css") }
         document::Link { rel: "stylesheet", href: asset!("/assets/app.css") }
-        Menu {}        
+        Menu {}
         div { class: "container is-max-tablet",
             if *page == Navigation::Import {
                 Import {}
