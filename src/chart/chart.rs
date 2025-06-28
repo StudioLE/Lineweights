@@ -13,11 +13,23 @@ pub fn Chart() -> Element {
             preserve_aspect_ratio: "xMidYMid slice",
             role: "img",
             for entry in entries {
+                if let Some(weight_sma) = entry.weight_sma {
+                    if let  Some(weight) = entry.weight {
+                        line {
+                            x1: range.get_x(entry.date),
+                            y1: range.get_y(weight),
+                            x2: range.get_x(entry.date),
+                            y2: range.get_y(weight_sma),
+                            stroke: "#1f2937",
+                            stroke_width: 0.0035,
+                        }
+                    }
+                }
                 if let Some(weight) = entry.weight {
                     circle {
                         cx: range.get_x(entry.date),
                         cy: range.get_y(weight),
-                        r: 0.0025,
+                        r: 0.0050,
                         fill: "#1f2937"
                     }
                 }
@@ -25,7 +37,7 @@ pub fn Chart() -> Element {
                     circle {
                         cx: range.get_x(entry.date),
                         cy: range.get_y(weight_sma),
-                        r: if entry.shot.is_some() { 0.0075 } else { 0.005 },
+                        r: if entry.shot.is_some() { 0.0075 } else { 0.0050 },
                         fill: get_color(entry.shot)
                     }
                 }
