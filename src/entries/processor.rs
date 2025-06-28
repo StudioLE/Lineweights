@@ -1,6 +1,7 @@
 use crate::prelude::*;
 
-const MOVING_AVERAGE_RANGE: usize = 7;
+const SMA: usize = 6;
+const SMA_CENTERED: usize = 3;
 
 #[derive(Debug)]
 pub struct Processor;
@@ -25,7 +26,14 @@ fn set_weight_sma(entries: &mut [Entry]) {
         entry.weight_sma = Some(get_simple_moving_average(
             &entries_clone,
             day,
-            MOVING_AVERAGE_RANGE,
+            SMA,
+            0
+        ));
+        entry.weight_sma_centered = Some(get_simple_moving_average(
+            &entries_clone,
+            day,
+            SMA_CENTERED,
+            SMA_CENTERED,
         ));
     }
 }
@@ -36,14 +44,15 @@ fn set_weight_sma(entries: &mut [Entry]) {
     clippy::cast_precision_loss,
     clippy::cast_sign_loss
 )]
-fn get_simple_moving_average(entries: &[Entry], day: usize, range: usize) -> f32 {
+fn get_simple_moving_average(entries: &[Entry], day: usize, before: usize, after: usize) -> f32 {
     let day = day as isize;
-    let range = range as isize;
+    let before = before as isize;
+    let after = after as isize;
     let weights: Vec<_> = entries
         .iter()
         .filter(|x| {
             let candidate = x.day.expect("entry should have day set") as isize;
-            candidate >= day - range && candidate <= day
+            candidate >= day - before && candidate <= day + after
         })
         .filter_map(|x| x.weight)
         .collect();

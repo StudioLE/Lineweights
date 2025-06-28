@@ -7,5 +7,6 @@ pub struct Entry {
     pub day: Option<usize>,
     pub weight: Option<f32>,
     pub weight_sma: Option<f32>,
+    pub weight_sma_centered: Option<f32>,
     pub shot: Option<Shot>,
 }

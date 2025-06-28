@@ -92,6 +92,7 @@ impl ShotsyData {
             day: None,
             weight: self.weight.map(|x| x * LB_TO_KG),
             weight_sma: None,
+            weight_sma_centered: None,
             shot: self.to_shot(),
         })
     }

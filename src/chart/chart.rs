@@ -25,8 +25,10 @@ circle.d125 {{ fill: {SHOT_125} }}
 circle.d150 {{ fill: {SHOT_150} }}
 line {{ stroke-width: 0.0025 }}
 line {{ stroke: {SHOT_NONE} }}
-line.trend {{ stroke-width: 0.0050 }}
-line.trend {{ stroke: {EMERALD_400} }}
+line.sma {{ stroke-width: 0.0025 }}
+line.sma {{ stroke: {EMERALD_900} }}
+line.smac {{ stroke-width: 0.0050 }}
+line.smac {{ stroke: {EMERALD_400} }}
 line.shot {{ stroke: {SHOT_UNKNOWN} }}
 line.d25 {{ stroke: {SHOT_25} }}
 line.d50 {{ stroke: {SHOT_50} }}
@@ -61,7 +63,18 @@ line.d150 {{ stroke: {SHOT_150} }}
                 if let Some(left) = pair[0].weight_sma {
                     if let Some(right) = pair[1].weight_sma {
                         line {
-                            class: "trend",
+                            class: "sma",
+                            x1: range.get_x(pair[0].date),
+                            y1: range.get_y(left),
+                            x2: range.get_x(pair[1].date),
+                            y2: range.get_y(right),
+                        }
+                    }
+                }
+                if let Some(left) = pair[0].weight_sma_centered {
+                    if let Some(right) = pair[1].weight_sma_centered {
+                        line {
+                            class: "smac",
                             x1: range.get_x(pair[0].date),
                             y1: range.get_y(left),
                             x2: range.get_x(pair[1].date),
