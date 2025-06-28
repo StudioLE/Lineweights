@@ -9,7 +9,7 @@ pub struct Processor;
 impl Processor {
     pub fn execute(entries: &mut [Entry], range: &EntryRange) {
         set_days(entries, range);
-        set_weight_sma(entries);
+        set_weight_sma(entries, range);
     }
 }
 
@@ -19,15 +19,17 @@ fn set_days(entries: &mut [Entry], range: &EntryRange) {
     }
 }
 
-fn set_weight_sma(entries: &mut [Entry]) {
+fn set_weight_sma(entries: &mut [Entry], range: &EntryRange) {
     let entries_clone = entries.to_vec();
     let sma = SimpleMovingAverage {
         entries: entries_clone.clone(),
+        range: range.clone(),
         before: SMA,
         after: 0,
     };
     let smac = SimpleMovingAverage {
         entries: entries_clone.clone(),
+        range: range.clone(),
         before: SMA_CENTERED,
         after: SMA_CENTERED,
     };
@@ -40,6 +42,7 @@ fn set_weight_sma(entries: &mut [Entry]) {
 
 struct SimpleMovingAverage {
     entries: Vec<Entry>,
+    range: EntryRange,
     before: isize,
     after: isize,
 }
@@ -51,7 +54,14 @@ impl SimpleMovingAverage {
         clippy::cast_precision_loss
     )]
     pub fn execute(&self, day: usize) -> Option<f32> {
-        let weights = self.get_weights(day as isize);
+        let day = day as isize;
+        if day - self.before < 0 {
+            return None;
+        }
+        if day + self.after > self.range.get_total_days() {
+            return None;
+        }
+        let weights = self.get_weights(day);
         trace!("found {} weights for day {}", weights.len(), day);
         if weights.is_empty() {
             return None;

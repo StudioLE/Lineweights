@@ -3,7 +3,7 @@ use std::error::Error;
 use std::fmt::{Display, Formatter};
 use EntryRangeError::*;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct EntryRange {
     min_date: NaiveDate,
     max_date: NaiveDate,
@@ -65,6 +65,10 @@ impl EntryRange {
 
     pub fn get_day(&self, date: NaiveDate) -> usize {
         usize::try_from((date - self.min_date).num_days()).expect("should not overflow")
+    }
+
+    pub fn get_total_days(&self) -> isize {
+        isize::try_from((self.max_date - self.min_date).num_days()).expect("should not overflow")
     }
 
     #[allow(

@@ -25,10 +25,10 @@ circle.d125 {{ fill: {SHOT_125} }}
 circle.d150 {{ fill: {SHOT_150} }}
 line {{ stroke-width: 0.0025 }}
 line {{ stroke: {SHOT_NONE} }}
-line.sma {{ stroke-width: 0.0025 }}
-line.sma {{ stroke: {EMERALD_900} }}
-line.smac {{ stroke-width: 0.0050 }}
-line.smac {{ stroke: {EMERALD_400} }}
+line.sma {{ stroke-width: 0.0050 }}
+line.sma {{ stroke: {EMERALD_400} }}
+line.smac {{ stroke-width: 0.0025 }}
+line.smac {{ stroke: {EMERALD_900} }}
 line.shot {{ stroke: {SHOT_UNKNOWN} }}
 line.d25 {{ stroke: {SHOT_25} }}
 line.d50 {{ stroke: {SHOT_50} }}
