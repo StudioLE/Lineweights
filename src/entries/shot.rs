@@ -1,5 +1,14 @@
 use crate::prelude::*;
 
+pub const SHOT_25: &str = NEUTRAL_600;
+pub const SHOT_50: &str = PURPLE_900;
+pub const SHOT_75: &str = TEAL_700;
+pub const SHOT_100: &str = PINK_600;
+pub const SHOT_125: &str = SKY_500;
+pub const SHOT_150: &str = RED_400;
+pub const SHOT_UNKNOWN: &str = SLATE_500;
+pub const SHOT_NONE: &str = GRAY_700;
+
 #[allow(dead_code)]
 #[derive(Clone, Debug)]
 pub struct Shot {
@@ -11,28 +20,27 @@ pub struct Shot {
 }
 
 impl Shot {
-    #[allow(clippy::float_cmp)]
-    pub fn get_color(shot: &Option<Shot>) -> String {
+    #[allow(dead_code, clippy::float_cmp)]
+    pub fn get_color(shot: Option<&Shot>) -> String {
         let color = if let Some(shot) = shot {
             if shot.dose == 2.5 {
-                NEUTRAL_600
+                SHOT_25
             } else if shot.dose == 5.0 {
-                "#581c87"
+                SHOT_50
             } else if shot.dose == 7.5 {
-                PURPLE_900
+                SHOT_75
             } else if shot.dose == 10.0 {
-                PINK_600
+                SHOT_100
             } else if shot.dose == 12.5 {
-                SKY_500
+                SHOT_125
             } else if shot.dose == 15.0 {
-                RED_400
+                SHOT_150
             } else {
-                SLATE_500
+                SHOT_UNKNOWN
             }
         } else {
-            GRAY_700
+            SHOT_NONE
         };
         color.to_owned()
     }
-
 }

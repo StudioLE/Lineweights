@@ -72,13 +72,22 @@ impl EntryRange {
         clippy::cast_precision_loss,
         clippy::cast_sign_loss
     )]
-    pub fn get_x(&self, date: NaiveDate) -> f32 {
-        self.get_day(date) as f32 * self.x_scale
+    pub fn get_x(&self, date: NaiveDate) -> String {
+        let value = self.get_day(date) as f32 * self.x_scale;
+        decimal_places(value)
     }
 
-    pub fn get_y(&self, weight: f32) -> f32 {
-        1.0 - (weight - self.min_weight) * self.y_scale
+    pub fn get_y(&self, weight: f32) -> String {
+        let value = 1.0 - (weight - self.min_weight) * self.y_scale;
+        decimal_places(value)
     }
+}
+
+fn decimal_places(value: f32) -> String {
+    format!("{value:.6}")
+        .trim_end_matches('0')
+        .trim_end_matches('.')
+        .to_owned()
 }
 
 #[derive(Debug)]

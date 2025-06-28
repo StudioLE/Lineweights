@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 // https://v3.tailwindcss.com/docs/customizing-colors
 
 pub const SLATE_50: &str = "#f8fafc";
