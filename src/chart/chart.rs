@@ -12,6 +12,28 @@ pub fn Chart() -> Element {
             view_box: "-0.1 -0.1 1.2 1.2",
             preserve_aspect_ratio: "xMidYMid slice",
             role: "img",
+            for entry in entries.iter() {
+                if let Some(weight_sma) = entry.weight_sma {
+                    if let  Some(weight) = entry.weight {
+                        line {
+                            x1: range.get_x(entry.date),
+                            y1: range.get_y(weight),
+                            x2: range.get_x(entry.date),
+                            y2: range.get_y(weight_sma),
+                            stroke: Shot::get_color(&entry.shot),
+                            stroke_width: 0.0025,
+                        }
+                    }
+                }
+                if let Some(weight) = entry.weight {
+                    circle {
+                        cx: range.get_x(entry.date),
+                        cy: range.get_y(weight),
+                        r: if entry.shot.is_some() { 0.0075 } else { 0.0050 },
+                        fill: Shot::get_color(&entry.shot)
+                    }
+                }
+            }
             for pair in entries.windows(2) {
                 if let Some(left) = pair[0].weight_sma {
                     if let Some(right) = pair[1].weight_sma {
@@ -20,66 +42,23 @@ pub fn Chart() -> Element {
                             y1: range.get_y(left),
                             x2: range.get_x(pair[1].date),
                             y2: range.get_y(right),
-                            stroke: "#1f2937",
-                            stroke_width: 0.0035,
+                            stroke: EMERALD_400,
+                            stroke_width: 0.0050,
                         }
                     }
                 }
             }
-            for entry in entries {
-                if let Some(weight_sma) = entry.weight_sma {
-                    if let  Some(weight) = entry.weight {
-                        line {
-                            x1: range.get_x(entry.date),
-                            y1: range.get_y(weight),
-                            x2: range.get_x(entry.date),
-                            y2: range.get_y(weight_sma),
-                            stroke: "#1f2937",
-                            stroke_width: 0.0035,
-                        }
-                    }
-                }
-                if let Some(weight) = entry.weight {
-                    circle {
-                        cx: range.get_x(entry.date),
-                        cy: range.get_y(weight),
-                        r: 0.0050,
-                        fill: "#1f2937"
-                    }
-                }
+            for entry in entries.iter() {
                 if let Some(weight_sma) = entry.weight_sma {
                     circle {
                         cx: range.get_x(entry.date),
                         cy: range.get_y(weight_sma),
                         r: if entry.shot.is_some() { 0.0075 } else { 0.0050 },
-                        fill: get_color(entry.shot)
+                        visibility: "hidden",
+                        fill: Shot::get_color(&entry.shot)
                     }
                 }
             }
         }
     }
-}
-
-#[allow(clippy::float_cmp)]
-fn get_color(shot: Option<Shot>) -> String {
-    let color = if let Some(shot) = shot {
-        if shot.dose == 2.5 {
-            "#525252"
-        } else if shot.dose == 5.0 {
-            "#581c87"
-        } else if shot.dose == 7.5 {
-            "#0f766e"
-        } else if shot.dose == 10.0 {
-            "#db2777"
-        } else if shot.dose == 12.5 {
-            "#0ea5e9"
-        } else if shot.dose == 15.0 {
-            "#f87171"
-        } else {
-            "#64748b"
-        }
-    } else {
-        "#374151"
-    };
-    color.to_owned()
 }
