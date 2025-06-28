@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
-const SMA: usize = 6;
-const SMA_CENTERED: usize = 3;
+const SMA: isize = 6;
+const SMA_CENTERED: isize = 3;
 
 #[derive(Debug)]
 pub struct Processor;
@@ -21,43 +21,54 @@ fn set_days(entries: &mut [Entry], range: &EntryRange) {
 
 fn set_weight_sma(entries: &mut [Entry]) {
     let entries_clone = entries.to_vec();
+    let sma = SimpleMovingAverage {
+        entries: entries_clone.clone(),
+        before: SMA,
+        after: 0,
+    };
+    let smac = SimpleMovingAverage {
+        entries: entries_clone.clone(),
+        before: SMA_CENTERED,
+        after: SMA_CENTERED,
+    };
     for entry in entries.iter_mut() {
         let day = entry.day.expect("entry should have day set");
-        entry.weight_sma = Some(get_simple_moving_average(
-            &entries_clone,
-            day,
-            SMA,
-            0
-        ));
-        entry.weight_sma_centered = Some(get_simple_moving_average(
-            &entries_clone,
-            day,
-            SMA_CENTERED,
-            SMA_CENTERED,
-        ));
+        entry.weight_sma = sma.execute(day);
+        entry.weight_sma_centered = smac.execute(day);
     }
 }
 
-#[allow(
-    clippy::as_conversions,
-    clippy::cast_possible_wrap,
-    clippy::cast_precision_loss,
-    clippy::cast_sign_loss
-)]
-fn get_simple_moving_average(entries: &[Entry], day: usize, before: usize, after: usize) -> f32 {
-    let day = day as isize;
-    let before = before as isize;
-    let after = after as isize;
-    let weights: Vec<_> = entries
-        .iter()
-        .filter(|x| {
-            let candidate = x.day.expect("entry should have day set") as isize;
-            candidate >= day - before && candidate <= day + after
-        })
-        .filter_map(|x| x.weight)
-        .collect();
-    assert!(!weights.is_empty(), "should have at least one weight");
-    trace!("found {} weights for day {}", weights.len(), day);
-    let sum: f32 = weights.iter().sum();
-    sum / weights.len() as f32
+struct SimpleMovingAverage {
+    entries: Vec<Entry>,
+    before: isize,
+    after: isize,
+}
+
+impl SimpleMovingAverage {
+    #[allow(
+        clippy::as_conversions,
+        clippy::cast_possible_wrap,
+        clippy::cast_precision_loss
+    )]
+    pub fn execute(&self, day: usize) -> Option<f32> {
+        let weights = self.get_weights(day as isize);
+        trace!("found {} weights for day {}", weights.len(), day);
+        if weights.is_empty() {
+            return None;
+        }
+        let sum: f32 = weights.iter().sum();
+        Some(sum / weights.len() as f32)
+    }
+
+    #[allow(clippy::as_conversions, clippy::cast_possible_wrap)]
+    fn get_weights(&self, day: isize) -> Vec<f32> {
+        self.entries
+            .iter()
+            .filter(|x| {
+                let candidate = x.day.expect("entry should have day set") as isize;
+                candidate >= day - self.before && candidate <= day + self.after
+            })
+            .filter_map(|x| x.weight)
+            .collect()
+    }
 }
