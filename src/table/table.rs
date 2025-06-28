@@ -1,5 +1,4 @@
-use crate::schema::*;
-use dioxus::prelude::*;
+use crate::prelude::*;
 
 #[allow(clippy::absolute_paths)]
 #[component]

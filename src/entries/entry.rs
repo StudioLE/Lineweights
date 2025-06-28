@@ -1,5 +1,4 @@
-use crate::schema::Shot;
-use chrono::NaiveDate;
+use crate::prelude::*;
 
 #[allow(dead_code)]
 #[derive(Clone, Debug)]

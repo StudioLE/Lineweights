@@ -1,6 +1,5 @@
-use crate::schema::*;
-use dioxus::logger::tracing::warn;
-use dioxus::prelude::*;
+use super::*;
+use crate::prelude::*;
 use ImportError::*;
 
 #[derive(Debug)]
@@ -19,7 +18,7 @@ pub fn Import() -> Element {
         match read_file(event).await {
             Ok(entries) => {
                 state.entries.set(entries);
-                state.page.set(Page::Chart);
+                state.page.set(Navigation::Chart);
             }
             Err(error) => {
                 warn!("Failed to read file: {error:?}");

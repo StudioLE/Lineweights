@@ -1,5 +1,4 @@
-use crate::schema::*;
-use chrono::{NaiveDate, NaiveTime};
+use crate::prelude::*;
 use regex::Regex;
 use serde::Deserialize;
 
@@ -7,7 +6,7 @@ const LB_TO_KG: f32 = 0.453_592_37;
 
 #[allow(dead_code)]
 #[derive(Clone, Debug, Deserialize)]
-pub struct ShotsyData {
+pub(super) struct ShotsyData {
     #[serde(rename = "Date (UTC)")]
     pub date: Option<NaiveDate>,
 

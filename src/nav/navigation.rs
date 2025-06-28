@@ -1,5 +1,5 @@
 #[derive(Clone, Debug, PartialEq)]
-pub enum Page {
+pub enum Navigation {
     Import,
     Chart,
     Table,
