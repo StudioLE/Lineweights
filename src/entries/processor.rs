@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+const MOVING_AVERAGE_RANGE: usize = 7;
+
 #[derive(Debug)]
 pub struct Processor;
 
@@ -20,16 +22,16 @@ fn set_weight_sma(entries: &mut Vec<Entry>) {
     let entries_clone = entries.clone();
     for entry in entries.iter_mut() {
         let day = entry.day.expect("entry should have day set");
-        entry.weight_sma = Some(get_simple_moving_average(&entries_clone, day))
+        entry.weight_sma = Some(get_simple_moving_average(&entries_clone, day, MOVING_AVERAGE_RANGE))
     }
 }
 
-fn get_simple_moving_average(entries: &[Entry], day: usize) -> f32 {
+fn get_simple_moving_average(entries: &[Entry], day: usize, range: usize) -> f32 {
     let weights: Vec<_> = entries
         .iter()
         .filter(|x| {
             let candidate = x.day.expect("entry should have day set") as isize;
-            candidate >= day as isize - 3 && candidate <= day as isize + 3
+            candidate >= day as isize - range as isize && candidate <= day as isize
         })
         .filter_map(|x| x.weight)
         .collect();
