@@ -1,13 +1,21 @@
 use crate::entries::{Entry, EntryRange};
 use crate::prelude::SimpleMovingAverage;
 
+#[allow(clippy::integer_division, clippy::identity_op)]
 const SMA1: isize = 1 * 7 - 1;
+#[allow(clippy::integer_division, clippy::identity_op)]
 const SMA1C: isize = (1 * 7) / 2;
+#[allow(clippy::integer_division)]
 const SMA2: isize = 2 * 7 - 1;
+#[allow(clippy::integer_division)]
 const SMA2C: isize = (2 * 7) / 2;
+#[allow(clippy::integer_division)]
 const SMA4: isize = 4 * 7 - 1;
+#[allow(clippy::integer_division)]
 const SMA4C: isize = (4 * 7) / 2;
+#[allow(clippy::integer_division)]
 const SMA8: isize = 8 * 7 - 1;
+#[allow(clippy::integer_division)]
 const SMA8C: isize = (8 * 7) / 2;
 
 #[allow(dead_code)]

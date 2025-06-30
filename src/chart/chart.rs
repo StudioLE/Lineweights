@@ -50,25 +50,30 @@ pub fn Chart() -> Element {
     }
 }
 
-fn get_scatter(entries: &Vec<Entry>, range: &EntryRange) -> Vec<ScatterData> {
+fn get_scatter(entries: &[Entry], range: &EntryRange) -> Vec<ScatterData> {
     entries
         .iter()
         .filter_map(|entry| {
             Some(ScatterData {
-                point: Point::new(range.x_from_date(entry.date), range.y_from_weight(entry.weight?)),
+                point: Point::new(
+                    range.x_from_date(entry.date),
+                    range.y_from_weight(entry.weight?),
+                ),
                 class: get_shot_class(entry.shot.as_ref()),
                 size: if entry.shot.is_some() { 0.0075 } else { 0.0050 },
-                descender: entry
-                    .statistics
-                    .sma1c
-                    .map(|descender| Point::new(range.x_from_date(entry.date), range.y_from_weight(descender))),
+                descender: entry.statistics.sma1c.map(|descender| {
+                    Point::new(
+                        range.x_from_date(entry.date),
+                        range.y_from_weight(descender),
+                    )
+                }),
             })
         })
         .collect()
 }
 
 fn get_points<F: Fn(&WeightStatistics) -> Option<f32>>(
-    entries: &Vec<Entry>,
+    entries: &[Entry],
     range: &EntryRange,
     predicate: F,
 ) -> Vec<Point> {
