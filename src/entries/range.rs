@@ -1,9 +1,7 @@
 use crate::prelude::*;
-use std::error::Error;
-use std::fmt::{Display, Formatter};
 use EntryRangeError::*;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct EntryRange {
     min_date: NaiveDate,
     max_date: NaiveDate,
@@ -14,17 +12,6 @@ pub struct EntryRange {
 }
 
 impl EntryRange {
-    fn default() -> Self {
-        Self {
-            min_date: NaiveDate::default(),
-            max_date: NaiveDate::default(),
-            min_weight: f32::default(),
-            max_weight: f32::default(),
-            x_scale: f32::default(),
-            y_scale: f32::default(),
-        }
-    }
-
     pub fn new(entries: &[Entry]) -> Result<EntryRange, EntryRangeError> {
         let mut range = Self::default();
         range.set_date_range(entries)?;

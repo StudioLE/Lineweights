@@ -4,9 +4,9 @@ use crate::prelude::*;
 #[component]
 pub fn Chart() -> Element {
     let state = use_context::<State>();
-    let mut entries = state.entries.read().clone();
-    let range = EntryRange::new(&entries)?;
-    Processor::execute(&mut entries, &range);
+    let collection = state.entries.read();
+    let entries = collection.entries.clone();
+    let range = collection.range.clone();
     rsx! {
         svg {
             view_box: "-0.1 -0.1 1.2 1.2",

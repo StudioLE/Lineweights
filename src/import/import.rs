@@ -2,28 +2,24 @@ use super::*;
 use crate::prelude::*;
 use ImportError::*;
 
-#[derive(Debug)]
-pub enum ImportError {
-    NoFileEngine,
-    MultipleFiles,
-    NoFiles,
-    FailedToRead,
-}
-
 #[allow(clippy::absolute_paths)]
 #[component]
 pub fn Import() -> Element {
     let mut state = use_context::<State>();
     let on_file_changed = move |event| async move {
-        match read_file(event).await {
-            Ok(entries) => {
-                state.entries.set(entries);
-                state.page.set(Navigation::Chart);
-            }
-            Err(error) => {
-                warn!("Failed to read file: {error:?}");
-            }
-        }
+        let Some(entries) = read_file(event)
+            .await
+            .handle_error(|e| warn!("Failed to read file: {e:?}"))
+        else {
+            return;
+        };
+        let Some(collection) =
+            EntryCollection::new(entries).handle_error(|e| warn!("Failed to read file: {e:?}"))
+        else {
+            return;
+        };
+        state.entries.set(collection);
+        state.page.set(Navigation::Chart);
     };
     rsx! {
         h1 { class: "title", "Import data from Shotsy" }
@@ -88,3 +84,20 @@ async fn read_file(evt: Event<FormData>) -> Result<Vec<Entry>, ImportError> {
     }
     Ok(entries)
 }
+
+#[derive(Debug)]
+pub enum ImportError {
+    NoFileEngine,
+    MultipleFiles,
+    NoFiles,
+    FailedToRead,
+}
+
+impl Display for ImportError {
+    #[allow(clippy::absolute_paths)]
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{self:?}")
+    }
+}
+
+impl Error for ImportError {}
