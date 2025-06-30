@@ -7,7 +7,7 @@ pub const SHOT_100: &str = PINK_600;
 pub const SHOT_125: &str = SKY_500;
 pub const SHOT_150: &str = RED_400;
 pub const SHOT_UNKNOWN: &str = SLATE_500;
-pub const SHOT_NONE: &str = GRAY_700;
+pub const SHOT_NONE: &str = GRAY_600;
 
 #[allow(dead_code)]
 #[derive(Clone, Debug)]

@@ -30,11 +30,10 @@ polyline {{
   stroke-linejoin: bevel;
   stroke-width: 0.0025;
 }}
-polyline.sma {{
+polyline.sma1c {{
   stroke: {EMERALD_400};
   stroke-width: 0.0050;
 }}
-polyline.smac {{ stroke: {EMERALD_900} }}
 "
         }
     }

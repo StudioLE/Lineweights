@@ -2,13 +2,31 @@ use crate::entries::{Entry, EntryRange};
 use crate::prelude::trace;
 
 pub struct SimpleMovingAverage {
-    pub entries: Vec<Entry>,
-    pub range: EntryRange,
-    pub before: isize,
-    pub after: isize,
+    entries: Vec<Entry>,
+    range: EntryRange,
+    before: isize,
+    after: isize,
 }
 
 impl SimpleMovingAverage {
+    pub fn new(entries: &mut [Entry], range: &EntryRange, days: isize) -> Self {
+        Self {
+            entries: entries.to_vec(),
+            range: range.clone(),
+            before: days,
+            after: 0,
+        }
+    }
+
+    pub fn new_centered(entries: &mut [Entry], range: &EntryRange, days: isize) -> Self {
+        Self {
+            entries: entries.to_vec(),
+            range: range.clone(),
+            before: days,
+            after: days,
+        }
+    }
+
     #[allow(
         clippy::as_conversions,
         clippy::cast_possible_wrap,
