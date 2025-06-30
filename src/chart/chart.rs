@@ -7,100 +7,60 @@ pub fn Chart() -> Element {
     let collection = state.entries.read();
     let entries = collection.entries.clone();
     let range = collection.range.clone();
+    let weight_scatter: Vec<_> = entries
+        .iter()
+        .filter_map(|entry| {
+            Some(ScatterData {
+                point: Point::new(range.get_x(entry.date), range.get_y(entry.weight?)),
+                class: get_shot_class(entry.shot.as_ref()),
+                size: if entry.shot.is_some() { 0.0075 } else { 0.0050 },
+                descender: entry
+                    .weight_sma
+                    .map(|descender| Point::new(range.get_x(entry.date), range.get_y(descender))),
+            })
+        })
+        .collect();
+    let sma_line: Vec<_> = entries
+        .iter()
+        .filter_map(|entry| {
+            Some(Point::new(
+                range.get_x(entry.date),
+                range.get_y(entry.weight_sma?),
+            ))
+        })
+        .collect();
+    let smac_line: Vec<_> = entries
+        .iter()
+        .filter_map(|entry| {
+            Some(Point::new(
+                range.get_x(entry.date),
+                range.get_y(entry.weight_sma_centered?),
+            ))
+        })
+        .collect();
     rsx! {
         svg {
             view_box: "-0.1 -0.1 1.2 1.2",
             preserve_aspect_ratio: "xMidYMid slice",
             role: "img",
-            style {
-"
-circle.sma {{ visibility: hidden }}
-circle {{ fill: {SHOT_NONE} }}
-circle.shot {{ fill: {SHOT_UNKNOWN} }}
-circle.d25 {{ fill: {SHOT_25} }}
-circle.d50 {{ fill: {SHOT_50} }}
-circle.d75 {{ fill: {SHOT_75} }}
-circle.d100 {{ fill: {SHOT_100} }}
-circle.d125 {{ fill: {SHOT_125} }}
-circle.d150 {{ fill: {SHOT_150} }}
-line {{ stroke-width: 0.0025 }}
-line {{ stroke: {SHOT_NONE} }}
-line.sma {{ stroke-width: 0.0050 }}
-line.sma {{ stroke: {EMERALD_400} }}
-line.smac {{ stroke-width: 0.0025 }}
-line.smac {{ stroke: {EMERALD_900} }}
-line.shot {{ stroke: {SHOT_UNKNOWN} }}
-line.d25 {{ stroke: {SHOT_25} }}
-line.d50 {{ stroke: {SHOT_50} }}
-line.d75 {{ stroke: {SHOT_75} }}
-line.d100 {{ stroke: {SHOT_100} }}
-line.d125 {{ stroke: {SHOT_125} }}
-line.d150 {{ stroke: {SHOT_150} }}
-"
+            Style {}
+            ScatterChart {
+                class: "sma",
+                data: weight_scatter,
             }
-            for entry in entries.iter() {
-                if let Some(weight_sma) = entry.weight_sma {
-                    if let  Some(weight) = entry.weight {
-                        line {
-                            class: get_shot_class(entry.shot.as_ref()),
-                            x1: range.get_x(entry.date),
-                            y1: range.get_y(weight),
-                            x2: range.get_x(entry.date),
-                            y2: range.get_y(weight_sma),
-                        }
-                    }
-                }
-                if let Some(weight) = entry.weight {
-                    circle {
-                        class: get_shot_class(entry.shot.as_ref()),
-                        cx: range.get_x(entry.date),
-                        cy: range.get_y(weight),
-                        r: if entry.shot.is_some() { 0.0075 } else { 0.0050 },
-                    }
-                }
+            LineChart {
+                class: "sma",
+                points: sma_line,
             }
-            for pair in entries.windows(2) {
-                if let Some(left) = pair[0].weight_sma {
-                    if let Some(right) = pair[1].weight_sma {
-                        line {
-                            class: "sma",
-                            x1: range.get_x(pair[0].date),
-                            y1: range.get_y(left),
-                            x2: range.get_x(pair[1].date),
-                            y2: range.get_y(right),
-                        }
-                    }
-                }
-                if let Some(left) = pair[0].weight_sma_centered {
-                    if let Some(right) = pair[1].weight_sma_centered {
-                        line {
-                            class: "smac",
-                            x1: range.get_x(pair[0].date),
-                            y1: range.get_y(left),
-                            x2: range.get_x(pair[1].date),
-                            y2: range.get_y(right),
-                        }
-                    }
-                }
-            }
-            for entry in entries.iter() {
-                if let Some(weight_sma) = entry.weight_sma {
-                    circle {
-                        class: format!("sma {}", get_shot_class(entry.shot.as_ref())),
-                        cx: range.get_x(entry.date),
-                        cy: range.get_y(weight_sma),
-                        r: if entry.shot.is_some() { 0.0075 } else { 0.0050 },
-                    }
-                }
+            LineChart {
+                class: "smac",
+                points: smac_line,
             }
         }
     }
 }
 
-fn get_shot_class(shot: Option<&Shot>) -> String {
-    if let Some(shot) = shot {
-        format!("shot d{}", shot.dose * 10.0)
-    } else {
-        String::new()
-    }
+fn get_shot_class(shot: Option<&Shot>) -> Option<String> {
+    let shot = shot?;
+    Some(format!("shot d{}", shot.dose * 10.0))
 }
