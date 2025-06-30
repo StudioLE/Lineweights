@@ -7,7 +7,7 @@ pub fn Chart() -> Element {
     let entries = collection.entries.clone();
     let range = collection.range.clone();
     let weight_scatter: Vec<_> = get_scatter(&entries, &range);
-    let trend = get_trend(&entries, 7, |x| x.sma1c)
+    let trend: Vec<Point> = get_trend(&entries, 7, |x| x.sma1c)
         .unwrap_or_default()
         .into_iter()
         .map(|(day, value)| Point::new(range.x_from_day(day), range.y_from_weight(value)))
@@ -40,7 +40,12 @@ pub fn Chart() -> Element {
             }
             LineChart {
                 class: "trend",
+                points: trend.clone(),
+            }
+            DimensionChart {
+                class: "trend",
                 points: trend,
+                y_scale: range.y_scale,
             }
             ScatterChart {
                 class: None,

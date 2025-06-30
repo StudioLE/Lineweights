@@ -17,6 +17,10 @@ line {{
   stroke-width: 0.0025;
   stroke: {SHOT_NONE}
 }}
+.dim line {{
+  stroke-width: 0.0010;
+  stroke: {EMERALD_800};
+}}
 .shot line {{ stroke: {SHOT_UNKNOWN} }}
 .d25 line {{ stroke: {SHOT_25} }}
 .d50 line {{ stroke: {SHOT_50} }}
@@ -37,6 +41,16 @@ polyline.sma1c {{
 polyline.trend {{
   stroke: {EMERALD_800};
   stroke-width: 0.0025;
+}}
+text {{
+  fill: {EMERALD_800};
+  font-size: 0.1%;
+  text-anchor: middle;
+  dominant-baseline: central;
+  stroke: var(--bulma-body-background-color);
+  stroke-width: 1%;
+  paint-order: stroke;
+  stroke-linejoin: round;
 }}
 "
         }

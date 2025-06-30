@@ -3,12 +3,12 @@ use EntryRangeError::*;
 
 #[derive(Clone, Debug, Default)]
 pub struct EntryRange {
-    min_date: NaiveDate,
-    max_date: NaiveDate,
-    min_weight: f32,
-    max_weight: f32,
-    x_scale: f32,
-    y_scale: f32,
+    pub min_date: NaiveDate,
+    pub max_date: NaiveDate,
+    pub min_weight: f32,
+    pub max_weight: f32,
+    pub x_scale: f32,
+    pub y_scale: f32,
 }
 
 impl EntryRange {

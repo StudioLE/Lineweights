@@ -1,7 +1,7 @@
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Point {
-    x: f32,
-    y: f32,
+    pub x: f32,
+    pub y: f32,
 }
 
 impl Point {
@@ -18,7 +18,7 @@ impl Point {
     }
 }
 
-fn decimal_places(value: f32) -> String {
+pub fn decimal_places(value: f32) -> String {
     format!("{value:.6}")
         .trim_end_matches('0')
         .trim_end_matches('.')
