@@ -17,6 +17,6 @@ impl EntryCollection {
 
 fn set_days(entries: &mut [Entry], range: &EntryRange) {
     for entry in entries.iter_mut() {
-        entry.day = Some(range.get_day(entry.date));
+        entry.day = range.get_day(entry.date);
     }
 }

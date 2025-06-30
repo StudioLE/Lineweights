@@ -54,7 +54,7 @@ impl SimpleMovingAverage {
         self.entries
             .iter()
             .filter(|x| {
-                let candidate = x.day.expect("entry should have day set") as isize;
+                let candidate = x.day as isize;
                 candidate >= day - self.before && candidate <= day + self.after
             })
             .filter_map(|x| x.weight)

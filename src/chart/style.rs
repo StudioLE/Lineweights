@@ -34,6 +34,10 @@ polyline.sma1c {{
   stroke: {EMERALD_400};
   stroke-width: 0.0050;
 }}
+polyline.trend {{
+  stroke: {EMERALD_800};
+  stroke-width: 0.0025;
+}}
 "
         }
     }

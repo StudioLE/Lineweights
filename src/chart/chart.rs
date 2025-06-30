@@ -7,6 +7,11 @@ pub fn Chart() -> Element {
     let entries = collection.entries.clone();
     let range = collection.range.clone();
     let weight_scatter: Vec<_> = get_scatter(&entries, &range);
+    let trend = get_trend(&entries, 7, |x| x.sma1c)
+        .unwrap_or_default()
+        .into_iter()
+        .map(|(day, value)| Point::new(range.x_from_day(day), range.y_from_weight(value)))
+        .collect();
     let sma1c_line = get_points(&entries, &range, |x| x.sma1c);
     let sma2_line = get_points(&entries, &range, |x| x.sma2);
     let sma4_line = get_points(&entries, &range, |x| x.sma4);
@@ -22,16 +27,20 @@ pub fn Chart() -> Element {
                 points: sma1c_line,
             }
             LineChart {
-                class: "sma",
+                class: "sma2",
                 points: sma2_line,
             }
             LineChart {
-                class: "sma",
+                class: "sma4",
                 points: sma4_line,
             }
             LineChart {
-                class: "sma",
+                class: "sma8",
                 points: sma8_line,
+            }
+            LineChart {
+                class: "trend",
+                points: trend,
             }
             ScatterChart {
                 class: None,
@@ -46,13 +55,13 @@ fn get_scatter(entries: &Vec<Entry>, range: &EntryRange) -> Vec<ScatterData> {
         .iter()
         .filter_map(|entry| {
             Some(ScatterData {
-                point: Point::new(range.get_x(entry.date), range.get_y(entry.weight?)),
+                point: Point::new(range.x_from_date(entry.date), range.y_from_weight(entry.weight?)),
                 class: get_shot_class(entry.shot.as_ref()),
                 size: if entry.shot.is_some() { 0.0075 } else { 0.0050 },
                 descender: entry
                     .statistics
                     .sma1c
-                    .map(|descender| Point::new(range.get_x(entry.date), range.get_y(descender))),
+                    .map(|descender| Point::new(range.x_from_date(entry.date), range.y_from_weight(descender))),
             })
         })
         .collect()
@@ -67,8 +76,8 @@ fn get_points<F: Fn(&WeightStatistics) -> Option<f32>>(
         .iter()
         .filter_map(|entry| {
             Some(Point::new(
-                range.get_x(entry.date),
-                range.get_y(predicate(&entry.statistics)?),
+                range.x_from_date(entry.date),
+                range.y_from_weight(predicate(&entry.statistics)?),
             ))
         })
         .collect()

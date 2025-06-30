@@ -63,11 +63,20 @@ impl EntryRange {
         clippy::cast_precision_loss,
         clippy::cast_sign_loss
     )]
-    pub fn get_x(&self, date: NaiveDate) -> f32 {
+    pub fn x_from_date(&self, date: NaiveDate) -> f32 {
         self.get_day(date) as f32 * self.x_scale
     }
 
-    pub fn get_y(&self, weight: f32) -> f32 {
+    #[allow(
+        clippy::as_conversions,
+        clippy::cast_precision_loss,
+        clippy::cast_sign_loss
+    )]
+    pub fn x_from_day(&self, day: usize) -> f32 {
+        day as f32 * self.x_scale
+    }
+
+    pub fn y_from_weight(&self, weight: f32) -> f32 {
         1.0 - (weight - self.min_weight) * self.y_scale
     }
 }

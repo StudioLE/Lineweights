@@ -42,16 +42,15 @@ impl WeightStatistics {
         let sma8 = SimpleMovingAverage::new(entries, range, SMA8);
         let sma8c = SimpleMovingAverage::new_centered(entries, range, SMA8C);
         for entry in entries.iter_mut() {
-            let day = entry.day.expect("entry should have day set");
             entry.statistics = WeightStatistics {
-                sma1: sma1.execute(day),
-                sma1c: sma1c.execute(day),
-                sma2: sma2.execute(day),
-                sma2c: sma2c.execute(day),
-                sma4: sma4.execute(day),
-                sma4c: sma4c.execute(day),
-                sma8: sma8.execute(day),
-                sma8c: sma8c.execute(day),
+                sma1: sma1.execute(entry.day),
+                sma1c: sma1c.execute(entry.day),
+                sma2: sma2.execute(entry.day),
+                sma2c: sma2c.execute(entry.day),
+                sma4: sma4.execute(entry.day),
+                sma4c: sma4c.execute(entry.day),
+                sma8: sma8.execute(entry.day),
+                sma8c: sma8c.execute(entry.day),
             };
         }
     }
