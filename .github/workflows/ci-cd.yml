@@ -188,19 +188,17 @@ jobs:
         ARTIFACT="${{ env.NAME }}-${{ needs.release.outputs.version }}-wasm32"
         echo "name=${ARTIFACT}" >> $GITHUB_OUTPUT
 
-    - name: Copy WebAssembly
-      run: cp -r target/dx/${{ env.NAME }}/release/web/public ${{ steps.artifact.outputs.name }}
-
     - name: Create archive
       run: >
-        7z a
-        ${{ steps.artifact.outputs.name }}.7z
-        ${{ steps.artifact.outputs.name }}
+        tar -czvf
+        ${{ steps.artifact.outputs.name }}.tar.gz
+        -C target/dx/${{ env.NAME }}/release/web/public
+        .
 
     - uses: actions/upload-artifact@v4
       with:
         name: ${{ steps.artifact.outputs.name }}
-        path: ${{ steps.artifact.outputs.name }}.7z
+        path: ${{ steps.artifact.outputs.name }}.tar.gz
 
 
   git-tag:
@@ -303,6 +301,9 @@ jobs:
       continue-on-error: true
       run: rm -rf latest
 
+    - name: Re-create latest
+      run: mkdir latest
+
     - name: Download archive
       uses: actions/download-artifact@v4
       with:
@@ -310,10 +311,13 @@ jobs:
         path: artifacts
 
     - name: Extract archive
-      run: 7z e artifacts/*.7z -olatest
+      run: >
+        tar -xzvf
+        artifacts/*.tar.gz
+        -C latest
 
     - name: Remove archive
-      run: rm artifacts/*.7z
+      run: rm artifacts/*.tar.gz
 
     - name: List
       run: ls -R1 latest
