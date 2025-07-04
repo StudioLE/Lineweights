@@ -32,14 +32,19 @@ polyline {{
   fill: none;
   stroke: {SHOT_NONE};
   stroke-linejoin: bevel;
-  stroke-width: 0.0025;
+  stroke-width: 0.0075;
+}}
+polyline.sma1c {{
+  stroke: {SKY_400};
+  stroke-array: 1 0.5;
+  opacity: 0.35;
 }}
 polyline.sma2, polyline.sma4, polyline.sma8 {{
   visibility: hidden;
 }}
 polyline.trend {{
-  stroke: {EMERALD_400};
-  stroke-width: 0.0030;
+  stroke: {EMERALD_800};
+  stroke-width: 0.0075;
 }}
 text {{
   fill: {EMERALD_800};
