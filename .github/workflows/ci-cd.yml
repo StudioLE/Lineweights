@@ -9,11 +9,11 @@ env:
   NAME: lineweights
 jobs:
 
-  release:
+  surveyor:
     name: Determine Version
     runs-on: ubuntu-24.04
     outputs:
-      version: ${{ steps.release.outputs.version }}
+      version: ${{ steps.surveyor.outputs.version }}
     steps:
 
     - uses: actions/checkout@v4
@@ -22,7 +22,7 @@ jobs:
         fetch-tags: true
 
     - name: Run Surveyor
-      id: release
+      id: surveyor
       env:
         GH_TOKEN: ${{ secrets.SURVEYOR_TOKEN }}
         SURVEYOR_VERSION: v0.7.2
@@ -38,7 +38,7 @@ jobs:
         echo "version=${VERSION}" >> $GITHUB_OUTPUT
         echo "${VERSION}"
 
-    - run: echo "# ${{ steps.release.outputs.version}}" >> $GITHUB_STEP_SUMMARY
+    - run: echo "# ${{ steps.surveyor.outputs.version}}" >> $GITHUB_STEP_SUMMARY
 
     - run: cat ${{ runner.temp }}/release-notes.md >> $GITHUB_STEP_SUMMARY
 
@@ -48,10 +48,10 @@ jobs:
         path: ${{ runner.temp }}/release-notes.md
 
     - run: /home/linuxbrew/.linuxbrew/bin/brew install cargo-edit
-      if: steps.release.outputs.version != ''
+      if: steps.surveyor.outputs.version != ''
 
-    - run: /home/linuxbrew/.linuxbrew/bin/cargo-set-version set-version ${{ steps.release.outputs.version }}
-      if: steps.release.outputs.version != ''
+    - run: /home/linuxbrew/.linuxbrew/bin/cargo-set-version set-version ${{ steps.surveyor.outputs.version }}
+      if: steps.surveyor.outputs.version != ''
 
     - run: git --no-pager diff --color
 
@@ -65,7 +65,7 @@ jobs:
     name: Build
     runs-on: ubuntu-24.04
     needs:
-    - release
+    - surveyor
     steps:
 
     - name: Fetch dependencies
@@ -94,7 +94,7 @@ jobs:
       id: cargo-cache
       uses: actions/cache/restore@v4
       with:
-        key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}-${{ needs.release.outputs.version }}
+        key: cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}-${{ needs.surveyor.outputs.version }}
         restore-keys: |
           cargo-${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}-
           cargo-${{ runner.os }}-
@@ -185,7 +185,7 @@ jobs:
     - name: Artifact name
       id: artifact
       run: |
-        ARTIFACT="${{ env.NAME }}-${{ needs.release.outputs.version }}-wasm32"
+        ARTIFACT="${{ env.NAME }}-${{ needs.surveyor.outputs.version }}-wasm32"
         echo "name=${ARTIFACT}" >> $GITHUB_OUTPUT
 
     - name: Create archive
@@ -204,9 +204,9 @@ jobs:
   git-tag:
     name: Tag
     runs-on: ubuntu-24.04
-    if: needs.release.outputs.version != '' && contains(needs.release.outputs.version, '-')
+    if: needs.surveyor.outputs.version != '' && contains(needs.surveyor.outputs.version, '-')
     needs:
-    - release
+    - surveyor
     - build
     steps:
 
@@ -221,18 +221,18 @@ jobs:
         git config user.email "cicd.tbxeq@passmail.com"
 
     - name: git tag
-      run: git tag "v${{ needs.release.outputs.version }}"
+      run: git tag "v${{ needs.surveyor.outputs.version }}"
 
     - name: git push
-      run: git push origin "v${{ needs.release.outputs.version }}"
+      run: git push origin "v${{ needs.surveyor.outputs.version }}"
 
 
   github-release:
-    name: Release
+    name: GitHub Release
     runs-on: ubuntu-24.04
-    if: needs.release.outputs.version != '' && ! contains(needs.release.outputs.version, '-')
+    if: needs.surveyor.outputs.version != '' && ! contains(needs.surveyor.outputs.version, '-')
     needs:
-    - release
+    - surveyor
     - build
     steps:
 
@@ -243,41 +243,41 @@ jobs:
         name: release-notes.md
 
     - name: Create Release
-      if: needs.release.outputs.version != '' && ! contains(needs.release.outputs.version, '-')
+      if: needs.surveyor.outputs.version != '' && ! contains(needs.surveyor.outputs.version, '-')
       env:
         GH_TOKEN: ${{ github.token }}
       run: >
         gh release create
-        "v${{ needs.release.outputs.version }}"
-        --title "v${{ needs.release.outputs.version }}"
+        "v${{ needs.surveyor.outputs.version }}"
+        --title "v${{ needs.surveyor.outputs.version }}"
         --notes-file "release-notes.md"
         --target ${{ github.ref_name }}
 
     - name: Create Prerelease
-      if: needs.release.outputs.version != '' && contains(needs.release.outputs.version, '-')
+      if: needs.surveyor.outputs.version != '' && contains(needs.surveyor.outputs.version, '-')
       env:
         GH_TOKEN: ${{ github.token }}
       run: >
         gh release create
-        "v${{ needs.release.outputs.version }}"
-        --title "v${{ needs.release.outputs.version }}"
+        "v${{ needs.surveyor.outputs.version }}"
+        --title "v${{ needs.surveyor.outputs.version }}"
         --notes-file "release-notes.md"
         --target ${{ github.ref_name }}
         --prerelease
 
     - uses: actions/download-artifact@v4
       with:
-        pattern: ${{ env.NAME }}-${{ needs.release.outputs.version }}-*
+        pattern: ${{ env.NAME }}-${{ needs.surveyor.outputs.version }}-*
         merge-multiple: true
 
     - name: Upload Release Asset
-      if: needs.release.outputs.version != ''
+      if: needs.surveyor.outputs.version != ''
       env:
         GH_TOKEN: ${{ github.token }}
       run: >
         gh release upload
-        v${{ needs.release.outputs.version }}
-        ${{ env.NAME }}-${{ needs.release.outputs.version }}-*
+        v${{ needs.surveyor.outputs.version }}
+        ${{ env.NAME }}-${{ needs.surveyor.outputs.version }}-*
         --clobber
         --repo "${{ github.repository }}"
 
@@ -285,9 +285,9 @@ jobs:
   push-webassembly:
     name: Push WebAssembly
     runs-on: ubuntu-24.04
-    if: needs.release.outputs.version != '' && ! contains(needs.release.outputs.version, '-')
+    if: needs.surveyor.outputs.version != '' && ! contains(needs.surveyor.outputs.version, '-')
     needs:
-    - release
+    - surveyor
     - build
     steps:
 
@@ -307,7 +307,7 @@ jobs:
     - name: Download archive
       uses: actions/download-artifact@v4
       with:
-        name: ${{ env.NAME }}-${{ needs.release.outputs.version }}-wasm32
+        name: ${{ env.NAME }}-${{ needs.surveyor.outputs.version }}-wasm32
         path: artifacts
 
     - name: Extract archive
@@ -323,14 +323,58 @@ jobs:
       run: ls -R1 latest
 
     - name: Copy
-      run: cp -r latest v${{ needs.release.outputs.version }}
+      run: cp -r latest v${{ needs.surveyor.outputs.version }}
 
     - name: Commit
       run: |
         git config user.name "CI/CD"
         git config user.email "cicd.tbxeq@passmail.com"
         git add --all
-        git commit --allow-empty -m "feat: Added ${{ needs.release.outputs.version }} WebAssembly build"
+        git commit --allow-empty -m "feat: Added ${{ needs.surveyor.outputs.version }} WebAssembly build"
+
+    - name: Status
+      run: git status
+
+    - name: Push
+      run: git push
+
+
+  approval:
+    name: Approval
+    runs-on: ubuntu-24.04
+    if: github.ref_name == 'main'
+    environment: release
+    steps:
+
+    - run: echo "Release deployment approved"
+
+
+  branch-release:
+    name: Branch Release
+    runs-on: ubuntu-24.04
+    needs:
+    - surveyor
+    - build
+    - approval
+    environment: release
+    steps:
+
+    - uses: actions/checkout@v4
+      with:
+        ref: release
+        fetch-depth: 0
+        fetch-tags: true
+
+    - name: Git Config
+      run: |
+        git config user.name "CI/CD"
+        git config user.email "cicd.tbxeq@passmail.com"
+
+    - name: Fetch
+      run: git fetch origin main
+
+    - name: Fast forward
+      run: git merge --ff-only origin/main
 
     - name: Status
       run: git status
