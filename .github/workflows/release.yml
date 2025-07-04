@@ -1,0 +1,38 @@
+name: Release
+on:
+  push:
+    branches:
+    - 'main'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+
+  release:
+    name: Release
+    runs-on: ubuntu-24.04
+    environment: release
+    steps:
+
+    - uses: actions/checkout@v4
+      with:
+        ref: test
+        fetch-depth: 0
+        fetch-tags: true
+
+    - name: Git Config
+      run: |
+        git config user.name "CI/CD"
+        git config user.email "cicd.tbxeq@passmail.com"
+
+    - name: Fetch
+      run: git fetch origin main
+
+    - name: Fast forward
+      run: git merge --ff-only origin/main
+
+    - name: Status
+      run: git status
+
+    - name: Push
+      run: git push
