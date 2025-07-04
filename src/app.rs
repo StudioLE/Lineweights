@@ -16,7 +16,6 @@ pub(super) fn App() -> Element {
         document::Link { rel: "stylesheet", href: asset!("/node_modules/bulma/css/bulma.css") }
         document::Link { rel: "stylesheet", href: asset!("/assets/app.css") }
         document::Link { rel: "stylesheet", href: asset!("/node_modules/@fontsource/source-sans-pro/400.css") }
-        Menu {}
         div { class: "container is-max-tablet",
             if *page == Navigation::Import {
                 Import {}
