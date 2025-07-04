@@ -24,7 +24,7 @@ RUN rustup target add wasm32-unknown-unknown
 RUN cargo install cargo-binstall
 RUN cargo binstall dioxus-cli
 WORKDIR /app
-COPY --from=npm /app/node_modules/bulma/css/bulma.css /app/node_modules/bulma/css/bulma.css
+COPY --from=npm /app/node_modules /app/node_modules
 COPY . /app
 EXPOSE 8080
 ENTRYPOINT ["dx", "serve"]

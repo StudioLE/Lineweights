@@ -34,17 +34,18 @@ polyline {{
   stroke-linejoin: bevel;
   stroke-width: 0.0025;
 }}
-polyline.sma1c {{
-  stroke: {EMERALD_400};
-  stroke-width: 0.0050;
+polyline.sma2, polyline.sma4, polyline.sma8 {{
+  visibility: hidden;
 }}
 polyline.trend {{
-  stroke: {EMERALD_800};
-  stroke-width: 0.0025;
+  stroke: {EMERALD_400};
+  stroke-width: 0.0030;
 }}
 text {{
   fill: {EMERALD_800};
-  font-size: 0.1%;
+  font-family: 'Source Sans Pro';
+  font-size: 0.14%;
+  font-weight: 400;
   text-anchor: middle;
   dominant-baseline: central;
   stroke: var(--bulma-body-background-color);

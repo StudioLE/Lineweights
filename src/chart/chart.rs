@@ -22,6 +22,15 @@ pub fn Chart() -> Element {
             preserve_aspect_ratio: "xMidYMid slice",
             role: "img",
             Style {}
+            DimensionChart {
+                class: "trend",
+                points: trend.clone(),
+                y_scale: range.y_scale,
+            }
+            LineChart {
+                class: "trend",
+                points: trend,
+            }
             LineChart {
                 class: "sma1c",
                 points: sma1c_line,
@@ -37,15 +46,6 @@ pub fn Chart() -> Element {
             LineChart {
                 class: "sma8",
                 points: sma8_line,
-            }
-            LineChart {
-                class: "trend",
-                points: trend.clone(),
-            }
-            DimensionChart {
-                class: "trend",
-                points: trend,
-                y_scale: range.y_scale,
             }
             ScatterChart {
                 class: None,
