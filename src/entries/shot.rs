@@ -1,4 +1,5 @@
 use crate::prelude::*;
+use serde::{Deserialize, Serialize};
 
 pub const SHOT_25: &str = NEUTRAL_600;
 pub const SHOT_50: &str = PURPLE_900;
@@ -10,7 +11,7 @@ pub const SHOT_UNKNOWN: &str = SLATE_500;
 pub const SHOT_NONE: &str = GRAY_600;
 
 #[allow(dead_code)]
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Shot {
     pub time: NaiveTime,
     pub medication: Medication,

@@ -13,8 +13,10 @@ pub fn Import() -> Element {
         else {
             return;
         };
-        let Some(collection) =
-            EntryCollection::new(entries).handle_error(|e| warn!("Failed to read file: {e:?}"))
+        let _ = LocalStorage::set_entries(&entries)
+            .handle_error(|e| warn!("Failed to write to local storage: {e:?}"));
+        let Some(collection) = EntryCollection::new(entries)
+            .handle_error(|e| warn!("Failed to determine range: {e:?}"))
         else {
             return;
         };

@@ -1,5 +1,6 @@
 use crate::entries::{Entry, EntryRange};
 use crate::prelude::SimpleMovingAverage;
+use serde::{Deserialize, Serialize};
 
 #[allow(clippy::integer_division, clippy::identity_op)]
 const SMA1: isize = 1 * 7 - 1;
@@ -19,7 +20,7 @@ const SMA8: isize = 8 * 7 - 1;
 const SMA8C: isize = (8 * 7) / 2;
 
 #[allow(dead_code)]
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct WeightStatistics {
     /// Simple moving average over the past week
     pub sma1: Option<f32>,

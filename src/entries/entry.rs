@@ -1,6 +1,7 @@
 use crate::prelude::*;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Entry {
     pub date: NaiveDate,
     pub day: usize,

@@ -7,8 +7,8 @@ use crate::prelude::*;
 /// Components should be annotated with `#[component]` to support props, better error messages,
 /// and autocomplete
 #[component]
-pub(crate) fn App() -> Element {
-    use_context_provider(State::new);
+pub(super) fn App() -> Element {
+    use_context_provider(State::from_local_storage);
     let state = use_context::<State>();
     let page = state.page.read();
     rsx! {
