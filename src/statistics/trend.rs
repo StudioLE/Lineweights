@@ -62,7 +62,7 @@ mod tests {
         // Assert
         let trend = collection.get_trend(7, |x| x.sma1c).unwrap_or_default();
         let verified = Verify::new()
-            .multiple(&trend)
+            .values(&trend)
             .expect("Verify should not fail");
         assert!(verified);
         Ok(())

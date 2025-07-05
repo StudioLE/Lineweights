@@ -38,11 +38,13 @@ mod tests {
         let csv = include_str!("../../samples/shotsy.csv");
         let data = ShotsyData::from_csv(csv);
         let entries = ShotsyData::to_entries(data);
-        let verified = include_str!("../../samples/entries.json");
         // Act
         let json = entries.to_json_pretty()?;
         // Assert
-        assert_eq!(json, verified);
+        let verified = Verify::new()
+            .string(&json, "json")
+            .expect("Verify should not fail");
+        assert!(verified);
         Ok(())
     }
 

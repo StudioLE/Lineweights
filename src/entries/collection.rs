@@ -63,7 +63,7 @@ mod tests {
         // Assert
         let statistics: Vec<_> = collection.statistics.into_values().collect();
         let verified = Verify::new()
-            .multiple(&statistics)
+            .values(&statistics)
             .expect("Verify should not fail");
         assert!(verified);
         Ok(())

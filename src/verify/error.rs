@@ -3,7 +3,6 @@ use std::io;
 #[derive(Debug)]
 pub enum VerifyError {
     VerifyDirectoryNotFound,
-    VerifiedFileNotFound,
     RecievedFileNotFound,
     #[allow(clippy::absolute_paths)]
     File(io::Error),

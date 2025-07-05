@@ -1,4 +1,3 @@
-use std::path::PathBuf;
 use std::thread;
 
 #[derive(Clone, Debug)]
@@ -25,20 +24,10 @@ impl TestContext {
             .to_owned();
         Self { module: path, name }
     }
-
-    pub fn get_path(&self) -> PathBuf {
-        let mut path = Self::get_verify_dir();
-        for component in &self.module {
-            path.push(component);
-        }
-        path.push(self.name.clone());
-        path
-    }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::super::prelude::*;
     use super::*;
 
     #[test]
@@ -56,26 +45,5 @@ mod tests {
             ]
         );
         assert_eq!(context.name, "new".to_owned());
-    }
-
-    #[test]
-    fn get_path() {
-        // Arrange
-        let context = TestContext::new();
-        // Act
-        let mut path = context.get_path();
-        // Assert
-        assert_eq!(
-            path,
-            TestContext::get_verify_dir().join("verify/context/tests/get_path")
-        );
-        // Arrange
-        path.set_extension(format!("{VERIFIED_EXT}.{JSON_EXT}"));
-        assert_eq!(
-            path,
-            TestContext::get_verify_dir().join(format!(
-                "verify/context/tests/get_path.{VERIFIED_EXT}.{JSON_EXT}"
-            ))
-        );
     }
 }
