@@ -3,11 +3,8 @@ use crate::prelude::*;
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct Entry {
     pub date: NaiveDate,
-    pub day: usize,
     pub weight: Option<f32>,
     pub shot: Option<Shot>,
-    #[serde(skip)]
-    pub statistics: WeightStatistics,
 }
 
 impl Entry {
@@ -44,7 +41,6 @@ mod tests {
         let verified = include_str!("../../samples/entries.json");
         // Act
         let json = entries.to_json_pretty()?;
-        println!("{json}");
         // Assert
         assert_eq!(json, verified);
         Ok(())

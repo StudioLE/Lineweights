@@ -54,6 +54,7 @@ impl EntryRange {
         usize::try_from((date - self.min_date).num_days()).expect("should not overflow")
     }
 
+    #[allow(dead_code)]
     pub fn get_total_days(&self) -> isize {
         isize::try_from((self.max_date - self.min_date).num_days()).expect("should not overflow")
     }

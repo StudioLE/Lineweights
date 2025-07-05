@@ -4,8 +4,8 @@ use crate::prelude::*;
 #[component]
 pub fn Table() -> Element {
     let state = use_context::<State>();
-    let collection = state.entries.read();
-    let entries = collection.entries.clone();
+    let collection = state.entries.read().to_owned();
+    let entries = collection.entries.into_values();
     rsx! {
         table { class: "table is-fullwidth",
             thead {
@@ -16,7 +16,7 @@ pub fn Table() -> Element {
                 }
             }
             tbody {
-                for entry in entries.iter() {
+                for entry in entries {
                     tr {
                         td { "{entry.date}" }
                         td { class: "has-text-right",
