@@ -20,3 +20,28 @@ fn set_days(entries: &mut [Entry], range: &EntryRange) {
         entry.day = range.get_day(entry.date);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn new() -> Result<(), EntryRangeError> {
+        // Arrange
+        let json = include_str!("../../samples/entries.json");
+        let entries = Entry::from_json(json).expect("Entries sample should be valid");
+        // Act
+        let collection = EntryCollection::new(entries)?;
+        // Assert
+        let stats: Vec<_> = collection
+            .entries
+            .into_iter()
+            .map(|entry| entry.statistics)
+            .collect();
+        let verified = Verify::new()
+            .multiple(&stats)
+            .expect("Verify should not fail");
+        assert!(verified);
+        Ok(())
+    }
+}

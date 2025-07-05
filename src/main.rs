@@ -8,6 +8,8 @@ mod prelude;
 mod state;
 mod statistics;
 mod table;
+#[allow(dead_code)]
+mod verify;
 
 use crate::app::App;
 use dioxus::prelude::launch;
