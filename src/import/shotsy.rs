@@ -1,6 +1,4 @@
 use crate::prelude::*;
-use regex::Regex;
-use serde::Deserialize;
 
 const LB_TO_KG: f32 = 0.453_592_37;
 

@@ -1,6 +1,4 @@
-use crate::entries::{Entry, EntryRange};
-use crate::prelude::SimpleMovingAverage;
-use serde::{Deserialize, Serialize};
+use crate::prelude::*;
 
 #[allow(clippy::integer_division, clippy::identity_op)]
 const SMA1: isize = 1 * 7 - 1;

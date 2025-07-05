@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use crate::prelude::*;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum Medication {
