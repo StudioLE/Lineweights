@@ -48,3 +48,24 @@ pub fn get_trend<F: Fn(&WeightStatistics) -> Option<f32>>(
     }
     Some(values)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn _get_trend() -> Result<(), EntryRangeError> {
+        // Arrange
+        let json = include_str!("../../samples/entries.json");
+        let entries = Entry::from_json(json).expect("Entries sample should be valid");
+        // Act
+        let collection = EntryCollection::new(entries)?;
+        // Assert
+        let trend = get_trend(&collection.entries, 7, |x| x.sma1c).unwrap_or_default();
+        let verified = Verify::new()
+            .multiple(&trend)
+            .expect("Verify should not fail");
+        assert!(verified);
+        Ok(())
+    }
+}
