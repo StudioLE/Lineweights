@@ -18,7 +18,7 @@ const SMA8: isize = 8 * 7 - 1;
 const SMA8C: isize = (8 * 7) / 2;
 
 #[allow(dead_code)]
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct WeightStatistics {
     /// Simple moving average over the past week
     pub sma1: Option<f32>,

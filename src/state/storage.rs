@@ -10,7 +10,7 @@ pub struct LocalStorage;
 impl LocalStorage {
     #[allow(clippy::result_large_err)]
     pub fn set_entries(entries: &[Entry]) -> Result<(), LocalStorageError> {
-        let serialized = serde_json::to_string(entries).map_err(Serialization)?;
+        let serialized = entries.to_json().map_err(Serialization)?;
         get_local_storage()?
             .set_item(ENTRIES_KEY, &serialized)
             .map_err(Js)
@@ -22,7 +22,7 @@ impl LocalStorage {
             .get_item(ENTRIES_KEY)
             .map_err(Js)?
             .ok_or(NoData)?;
-        serde_json::from_str(&serialized).map_err(Deserialization)
+        Entry::from_json(&serialized).map_err(Deserialization)
     }
 }
 

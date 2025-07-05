@@ -7,12 +7,14 @@ use ImportError::*;
 pub fn Import() -> Element {
     let mut state = use_context::<State>();
     let on_file_changed = move |event| async move {
-        let Some(entries) = read_file(event)
+        let Some(csv) = read_file(event)
             .await
             .handle_error(|e| warn!("Failed to read file: {e:?}"))
         else {
             return;
         };
+        let data = ShotsyData::from_csv(&csv);
+        let entries = ShotsyData::to_entries(data);
         let _ = LocalStorage::set_entries(&entries)
             .handle_error(|e| warn!("Failed to write to local storage: {e:?}"));
         let Some(collection) = EntryCollection::new(entries)
@@ -53,7 +55,7 @@ pub fn Import() -> Element {
     }
 }
 
-async fn read_file(evt: Event<FormData>) -> Result<Vec<Entry>, ImportError> {
+async fn read_file(evt: Event<FormData>) -> Result<String, ImportError> {
     let Some(file_engine) = evt.files() else {
         return Err(NoFileEngine);
     };
@@ -65,26 +67,10 @@ async fn read_file(evt: Event<FormData>) -> Result<Vec<Entry>, ImportError> {
         return Err(MultipleFiles);
     }
     let file = files.first().expect("should be exactly one file");
-    let Some(content) = file_engine.read_file_to_string(file).await else {
-        return Err(FailedToRead);
-    };
-    let mut reader = csv::Reader::from_reader(content.as_bytes());
-    let mut entries = Vec::new();
-    for (i, result) in reader.deserialize::<ShotsyData>().enumerate() {
-        match result {
-            Ok(shotsy) => {
-                if let Some(entry) = shotsy.to_entry() {
-                    entries.push(entry);
-                } else {
-                    warn!("Row did not contain shot or weight data.");
-                }
-            }
-            Err(error) => {
-                warn!("Failed to read line {}: {error}", i + 1);
-            }
-        }
-    }
-    Ok(entries)
+    file_engine
+        .read_file_to_string(file)
+        .await
+        .ok_or(FailedToRead)
 }
 
 #[derive(Debug)]

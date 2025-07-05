@@ -4,7 +4,7 @@ const LB_TO_KG: f32 = 0.453_592_37;
 
 #[allow(dead_code)]
 #[derive(Clone, Debug, Deserialize)]
-pub(super) struct ShotsyData {
+pub(crate) struct ShotsyData {
     #[serde(rename = "Date (UTC)")]
     pub date: Option<NaiveDate>,
 
@@ -84,7 +84,31 @@ pub(super) struct ShotsyData {
 }
 
 impl ShotsyData {
-    pub(crate) fn to_entry(self) -> Option<Entry> {
+    pub(crate) fn from_csv(content: &str) -> Vec<ShotsyData> {
+        let mut reader = csv::Reader::from_reader(content.as_bytes());
+        reader
+            .deserialize::<ShotsyData>()
+            .enumerate()
+            .filter_map(|(i, result)| {
+                result.handle_error(|e| warn!("Failed to read line {}: {e}", i + 1))
+            })
+            .collect()
+    }
+
+    #[allow(clippy::wrong_self_convention)]
+    pub(crate) fn to_entries(data: Vec<ShotsyData>) -> Vec<Entry> {
+        data.into_iter()
+            .filter_map(|shotsy| {
+                let entry = shotsy.clone().to_entry();
+                if entry.is_none() {
+                    warn!("Entry did not contain shot or weight data: {shotsy:?}");
+                }
+                entry
+            })
+            .collect()
+    }
+
+    fn to_entry(self) -> Option<Entry> {
         Some(Entry {
             date: self.date?,
             day: 0,
@@ -121,6 +145,24 @@ fn get_dose(input: Option<String>) -> Option<f32> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn import() {
+        // Arrange
+        let csv = include_str!("../../samples/shotsy.csv");
+        let json = include_str!("../../samples/entries.json");
+        let verified = Entry::from_json(json).expect("Entries JSON should be valid");
+        // Act
+        let data = ShotsyData::from_csv(csv);
+        // Assert
+        assert_eq!(data.len(), 144);
+        // Act
+        let entries = ShotsyData::to_entries(data);
+        // Assert
+        assert_eq!(entries.len(), 144);
+        assert_eq!(entries, verified);
+    }
+
     #[test]
     fn _get_dose() {
         assert_eq!(get_dose(Some("Mounjaro® 2.5 mg".to_owned())), Some(2.5));

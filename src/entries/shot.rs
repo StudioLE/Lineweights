@@ -10,7 +10,7 @@ pub const SHOT_UNKNOWN: &str = SLATE_500;
 pub const SHOT_NONE: &str = GRAY_600;
 
 #[allow(dead_code)]
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct Shot {
     pub time: NaiveTime,
     pub medication: Medication,
