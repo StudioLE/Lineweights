@@ -47,6 +47,13 @@ impl EntryCollection {
             })
             .collect()
     }
+
+    #[cfg(test)]
+    pub fn get_sample() -> EntryCollection {
+        let json = include_str!("../../samples/entries.json");
+        let entries = Entry::from_json(json).expect("Entries sample should be valid");
+        EntryCollection::new(entries).expect("Range should be valid")
+    }
 }
 
 #[cfg(test)]
@@ -54,33 +61,26 @@ mod tests {
     use super::*;
 
     #[test]
-    fn new() -> Result<(), EntryRangeError> {
+    fn new() {
         // Arrange
-        let json = include_str!("../../samples/entries.json");
-        let entries = Entry::from_json(json).expect("Entries sample should be valid");
-        // Act
-        let collection = EntryCollection::new(entries)?;
+        let collection = EntryCollection::get_sample();
         // Assert
         let statistics: Vec<_> = collection.statistics.into_values().collect();
         let verified = Verify::new()
             .values(&statistics)
             .expect("Verify should not fail");
         assert!(verified);
-        Ok(())
     }
 
     #[test]
-    fn get_entries_before() -> Result<(), EntryRangeError> {
+    fn get_entries_before() {
         // Arrange
-        let json = include_str!("../../samples/entries.json");
-        let entries = Entry::from_json(json).expect("Entries sample should be valid");
-        let collection = EntryCollection::new(entries)?;
+        let collection = EntryCollection::get_sample();
         // Act
         // Assert
         assert_eq!(count_entries_before(&collection, 2025, 2, 1), 0);
         assert_eq!(count_entries_before(&collection, 2025, 2, 6), 2);
         assert_eq!(count_entries_before(&collection, 2025, 2, 12), 3);
-        Ok(())
     }
 
     fn count_entries_before(

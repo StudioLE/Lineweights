@@ -53,18 +53,15 @@ mod tests {
     use super::*;
 
     #[test]
-    fn _get_trend() -> Result<(), EntryRangeError> {
+    fn _get_trend() {
         // Arrange
-        let json = include_str!("../../samples/entries.json");
-        let entries = Entry::from_json(json).expect("Entries sample should be valid");
+        let collection = EntryCollection::get_sample();
         // Act
-        let collection = EntryCollection::new(entries)?;
-        // Assert
         let trend = collection.get_trend(7, |x| x.sma1c).unwrap_or_default();
+        // Assert
         let verified = Verify::new()
             .values(&trend)
             .expect("Verify should not fail");
         assert!(verified);
-        Ok(())
     }
 }

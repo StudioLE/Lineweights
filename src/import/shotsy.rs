@@ -148,8 +148,6 @@ mod tests {
     fn import() {
         // Arrange
         let csv = include_str!("../../samples/shotsy.csv");
-        let json = include_str!("../../samples/entries.json");
-        let verified = Entry::from_json(json).expect("Entries JSON should be valid");
         // Act
         let data = ShotsyData::from_csv(csv);
         // Assert
@@ -157,8 +155,10 @@ mod tests {
         // Act
         let entries = ShotsyData::to_entries(data);
         // Assert
-        assert_eq!(entries.len(), 144);
-        assert_eq!(entries, verified);
+        let verified = Verify::new()
+            .values(&entries)
+            .expect("Verify should not fail");
+        assert!(verified);
     }
 
     #[test]

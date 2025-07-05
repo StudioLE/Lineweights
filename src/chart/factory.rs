@@ -111,26 +111,21 @@ mod tests {
     use super::*;
 
     #[test]
-    fn get_weight_scatter() -> Result<(), EntryRangeError> {
+    fn get_weight_scatter() {
         // Arrange
-        let json = include_str!("../../samples/entries.json");
-        let entries = Entry::from_json(json).expect("Entries sample should be valid");
-        let collection = EntryCollection::new(entries)?;
+        let collection = EntryCollection::get_sample();
         let factory = ChartFactory::new(collection);
         // Act
         let data = factory.get_weight_scatter();
         // Assert
         let verified = Verify::new().values(&data).expect("Verify should not fail");
         assert!(verified);
-        Ok(())
     }
 
     #[test]
-    fn get_trend_points() -> Result<(), EntryRangeError> {
+    fn get_trend_points() {
         // Arrange
-        let json = include_str!("../../samples/entries.json");
-        let entries = Entry::from_json(json).expect("Entries sample should be valid");
-        let collection = EntryCollection::new(entries)?;
+        let collection = EntryCollection::get_sample();
         let factory = ChartFactory::new(collection);
         // Act
         let points = factory.get_trend_points();
@@ -139,15 +134,12 @@ mod tests {
             .values(&points)
             .expect("Verify should not fail");
         assert!(verified);
-        Ok(())
     }
 
     #[test]
-    fn get_points_for_sma1c() -> Result<(), EntryRangeError> {
+    fn get_points_for_sma1c() {
         // Arrange
-        let json = include_str!("../../samples/entries.json");
-        let entries = Entry::from_json(json).expect("Entries sample should be valid");
-        let collection = EntryCollection::new(entries)?;
+        let collection = EntryCollection::get_sample();
         let factory = ChartFactory::new(collection);
         // Act
         let points = factory.get_points_for(|statistics| statistics.sma1c);
@@ -156,6 +148,5 @@ mod tests {
             .values(&points)
             .expect("Verify should not fail");
         assert!(verified);
-        Ok(())
     }
 }
