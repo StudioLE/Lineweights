@@ -356,7 +356,6 @@ jobs:
     - surveyor
     - build
     - approval
-    environment: release
     steps:
 
     - uses: actions/checkout@v4
