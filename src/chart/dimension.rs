@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-const HEIGHT: f32 = -0.1;
+const HEIGHT: f32 = -10.0;
 
 #[derive(Clone, PartialEq, Props)]
 pub struct DimensionProperties {
@@ -35,7 +35,7 @@ pub fn DimensionChart(props: DimensionProperties) -> Element {
             start_top: Point::new(start.x, top),
             end_top: Point::new(end.x, top),
             center_top: Point::new((start.x + end.x) * 0.5, top),
-            label: format!("{diff:.2}"),
+            label: format!("{diff:.1}"),
         }
     });
     rsx! {

@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+const MARGIN: isize = 10;
+
 pub struct ChartFactory {
     collection: EntryCollection,
     pub x_scale: f32,
@@ -9,13 +11,18 @@ pub struct ChartFactory {
 impl ChartFactory {
     #[allow(clippy::as_conversions, clippy::cast_precision_loss)]
     pub fn new(collection: EntryCollection) -> Self {
-        let total_days = (collection.range.max_date - collection.range.min_date).num_days();
+        let days = collection.range.get_total_days() as f32;
         let weight_span = collection.range.max_weight - collection.range.min_weight;
         Self {
             collection,
-            x_scale: 1.0 / total_days as f32,
-            y_scale: 1.0 / weight_span,
+            x_scale: 1.0,
+            y_scale: days / weight_span,
         }
+    }
+
+    pub(crate) fn get_viewbox(&self) -> String {
+        let days = self.collection.range.get_total_days() + MARGIN * 2;
+        format!("-{MARGIN} -{MARGIN} {days:.2} {days:.2}")
     }
 
     pub fn get_weight_scatter(&self) -> Vec<ScatterData> {
@@ -29,7 +36,7 @@ impl ChartFactory {
                         self.y_from_weight(entry.weight?),
                     ),
                     class: get_shot_class(entry.shot.as_ref()),
-                    size: if entry.shot.is_some() { 0.0075 } else { 0.0050 },
+                    size: if entry.shot.is_some() { 0.75 } else { 0.50 },
                     descender: self.get_statistics(entry).sma1c.map(|descender| {
                         Point::new(self.x_from_date(entry.date), self.y_from_weight(descender))
                     }),
@@ -90,7 +97,7 @@ impl ChartFactory {
     }
 
     fn y_from_weight(&self, weight: f32) -> f32 {
-        1.0 - (weight - self.collection.range.min_weight) * self.y_scale
+        (self.collection.range.max_weight - weight) * self.y_scale
     }
 }
 

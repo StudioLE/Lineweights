@@ -10,7 +10,7 @@ pub fn Chart() -> Element {
     let sma1c_line = factory.get_points_for(|x| x.sma1c);
     rsx! {
         svg {
-            view_box: "-0.1 -0.1 1.2 1.2",
+            view_box: factory.get_viewbox(),
             preserve_aspect_ratio: "xMidYMid slice",
             role: "img",
             Style {}

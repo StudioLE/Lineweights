@@ -14,11 +14,11 @@ circle {{ fill: {SHOT_NONE} }}
 .d125 circle {{ fill: {SHOT_125} }}
 .d150 circle {{ fill: {SHOT_150} }}
 line {{ 
-  stroke-width: 0.0025;
+  stroke-width: 0.25;
   stroke: {SHOT_NONE}
 }}
 .dim line {{
-  stroke-width: 0.0010;
+  stroke-width: 0.1;
   stroke: {EMERALD_800};
 }}
 .shot line {{ stroke: {SHOT_UNKNOWN} }}
@@ -32,11 +32,10 @@ polyline {{
   fill: none;
   stroke: {SHOT_NONE};
   stroke-linejoin: bevel;
-  stroke-width: 0.0075;
+  stroke-width: 0.75;
 }}
 polyline.sma1c {{
   stroke: {SKY_400};
-  stroke-array: 1 0.5;
   opacity: 0.35;
 }}
 polyline.sma2, polyline.sma4, polyline.sma8 {{
@@ -44,12 +43,12 @@ polyline.sma2, polyline.sma4, polyline.sma8 {{
 }}
 polyline.trend {{
   stroke: {EMERALD_800};
-  stroke-width: 0.0075;
+  stroke-width: 0.75;
 }}
 text {{
   fill: {EMERALD_800};
   font-family: 'Source Sans Pro';
-  font-size: 0.14%;
+  font-size: 14%;
   font-weight: 400;
   text-anchor: middle;
   dominant-baseline: central;
