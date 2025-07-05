@@ -7,8 +7,6 @@ pub struct EntryRange {
     pub max_date: NaiveDate,
     pub min_weight: f32,
     pub max_weight: f32,
-    pub x_scale: f32,
-    pub y_scale: f32,
 }
 
 impl EntryRange {
@@ -16,7 +14,6 @@ impl EntryRange {
         let mut range = Self::default();
         range.set_date_range(entries)?;
         range.set_weight_range(entries)?;
-        range.set_scales();
         Ok(range)
     }
 
@@ -42,14 +39,6 @@ impl EntryRange {
         Ok(())
     }
 
-    #[allow(clippy::as_conversions, clippy::cast_precision_loss)]
-    fn set_scales(&mut self) {
-        let total_days = (self.max_date - self.min_date).num_days();
-        let weight_span = self.max_weight - self.min_weight;
-        self.x_scale = 1.0 / total_days as f32;
-        self.y_scale = 1.0 / weight_span;
-    }
-
     pub fn get_day(&self, date: NaiveDate) -> usize {
         usize::try_from((date - self.min_date).num_days()).expect("should not overflow")
     }
@@ -57,28 +46,6 @@ impl EntryRange {
     #[allow(dead_code)]
     pub fn get_total_days(&self) -> isize {
         isize::try_from((self.max_date - self.min_date).num_days()).expect("should not overflow")
-    }
-
-    #[allow(
-        clippy::as_conversions,
-        clippy::cast_precision_loss,
-        clippy::cast_sign_loss
-    )]
-    pub fn x_from_date(&self, date: NaiveDate) -> f32 {
-        self.get_day(date) as f32 * self.x_scale
-    }
-
-    #[allow(
-        clippy::as_conversions,
-        clippy::cast_precision_loss,
-        clippy::cast_sign_loss
-    )]
-    pub fn x_from_day(&self, day: usize) -> f32 {
-        day as f32 * self.x_scale
-    }
-
-    pub fn y_from_weight(&self, weight: f32) -> f32 {
-        1.0 - (weight - self.min_weight) * self.y_scale
     }
 }
 

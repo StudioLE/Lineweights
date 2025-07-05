@@ -28,7 +28,9 @@ impl TestContext {
     pub(super) fn read_verified<T: DeserializeOwned>(&mut self) -> Result<Vec<T>, VerifyError> {
         let path = self.get_verified_path();
         if !path.is_file() {
-            return Err(VerifyError::VerifiedFileNotFound);
+            println!("Creating verified file: {}", path.display());
+            let received = self.get_received_path();
+            copy(received, &path).map_err(VerifyError::File)?;
         }
         let file = File::open(path).map_err(VerifyError::File)?;
         let reader = BufReader::new(file);

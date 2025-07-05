@@ -1,4 +1,6 @@
-#[derive(Clone, Copy, Debug, PartialEq)]
+use crate::prelude::*;
+
+#[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Point {
     pub x: f32,
     pub y: f32,

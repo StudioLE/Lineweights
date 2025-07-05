@@ -6,7 +6,7 @@ pub struct ScatterProperties {
     pub class: Option<String>,
 }
 
-#[derive(Clone, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct ScatterData {
     pub point: Point,
     pub size: f32,
