@@ -1,5 +1,6 @@
 mod chart;
 mod dimension;
+mod drag;
 mod factory;
 mod line;
 mod palette;
@@ -10,6 +11,7 @@ mod zoom;
 
 pub(crate) use chart::*;
 pub(super) use dimension::*;
+pub(crate) use drag::*;
 pub(super) use factory::*;
 pub(super) use line::*;
 pub(crate) use palette::*;
