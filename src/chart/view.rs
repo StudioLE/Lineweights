@@ -1,5 +1,5 @@
-use crate::prelude::*;
 use crate::prelude::dioxus_elements::input_data::MouseButton;
+use crate::prelude::*;
 
 const MARGIN: f32 = 10.0;
 const SVG_WIDTH: f32 = 705.0;
@@ -27,7 +27,7 @@ impl View {
     #[allow(clippy::as_conversions, clippy::cast_precision_loss)]
     pub fn new(range: &EntryRange) -> Self {
         let chart_size = range.get_total_days() as f32 + MARGIN * 2.0;
-        let chart_size = Point::new(chart_size , chart_size);
+        let chart_size = Point::new(chart_size, chart_size);
         Self {
             chart_size,
             // TODO: Dynamically set SVG_WIDTH
@@ -50,7 +50,7 @@ impl View {
 
     #[allow(clippy::as_conversions, clippy::cast_precision_loss)]
     pub(crate) fn get_min(&self) -> Point {
-        self.center - self.chart_size * 0.5 - Point::new(MARGIN, MARGIN)
+        self.center - self.chart_size * 0.5 * self.get_zoom_scale() - Point::new(MARGIN, MARGIN)
     }
 
     #[allow(clippy::as_conversions, clippy::cast_precision_loss)]
@@ -107,7 +107,7 @@ impl View {
         mut view: Signal<View>,
     ) {
         if event.data.trigger_button() != Some(MouseButton::Primary) {
-            return;            
+            return;
         }
         event.prevent_default();
         update_position(event, &mut action, &mut view);
