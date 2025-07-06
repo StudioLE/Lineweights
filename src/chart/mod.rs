@@ -1,21 +1,19 @@
 mod chart;
 mod dimension;
-mod drag;
 mod factory;
 mod line;
 mod palette;
 mod point;
 mod scatter;
 mod style;
-mod zoom;
+mod view;
 
 pub(crate) use chart::*;
 pub(super) use dimension::*;
-pub(crate) use drag::*;
 pub(super) use factory::*;
 pub(super) use line::*;
 pub(crate) use palette::*;
 pub(super) use point::*;
 pub(super) use scatter::*;
 pub(super) use style::*;
-pub(crate) use zoom::*;
+pub(crate) use view::*;

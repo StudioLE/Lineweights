@@ -1,10 +1,5 @@
 use crate::prelude::*;
 
-const MARGIN: isize = 10;
-
-// TODO: Dynamically set SVG_WIDTH
-const SVG_WIDTH: f32 = 705.0;
-
 pub struct ChartFactory {
     collection: EntryCollection,
     pub x_scale: f32,
@@ -21,20 +16,6 @@ impl ChartFactory {
             x_scale: 1.0,
             y_scale: days / weight_span,
         }
-    }
-
-    #[allow(clippy::as_conversions, clippy::cast_precision_loss)]
-    pub(crate) fn get_viewbox(
-        &self,
-        zoom: Signal<usize>,
-        position: Signal<ChartPosition>,
-    ) -> String {
-        let bounds = self.collection.range.get_total_days() + MARGIN * 2;
-        let viewport = bounds as f32 * Zoom::get_scale(zoom);
-        let screen_to_svg = viewport / SVG_WIDTH;
-        let x = MARGIN as f32 * -1.0 + (position.read().value.x * screen_to_svg);
-        let y = MARGIN as f32 * -1.0 + (position.read().value.y * screen_to_svg);
-        format!("{x:.5} {y:.5} {viewport:.5} {viewport:.5}")
     }
 
     pub fn get_weight_scatter(&self) -> Vec<ScatterData> {

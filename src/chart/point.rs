@@ -1,6 +1,6 @@
 use crate::prelude::dioxus_elements::geometry::PagePoint;
 use crate::prelude::*;
-use std::ops::{Add, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, Sub, SubAssign};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct Point {
@@ -22,6 +22,12 @@ impl Point {
     }
 }
 
+impl From<Point> for (f32, f32) {
+    fn from(point: Point) -> Self {
+        (point.x, point.y)
+    }
+}
+
 impl Display for Point {
     #[allow(clippy::absolute_paths)]
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -31,7 +37,6 @@ impl Display for Point {
 
 impl Add for Point {
     type Output = Self;
-
     fn add(self, rhs: Self) -> Self::Output {
         Self::new(self.x + rhs.x, self.y + rhs.y)
     }
@@ -39,9 +44,50 @@ impl Add for Point {
 
 impl Sub for Point {
     type Output = Self;
-
     fn sub(self, rhs: Self) -> Self::Output {
         Self::new(self.x - rhs.x, self.y - rhs.y)
+    }
+}
+
+impl Mul for Point {
+    type Output = Self;
+    fn mul(self, rhs: Self) -> Self::Output {
+        Self::new(self.x * rhs.x, self.y * rhs.y)
+    }
+}
+
+impl Div for Point {
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self::Output {
+        Self::new(self.x / rhs.x, self.y / rhs.y)
+    }
+}
+
+impl Mul<f32> for Point {
+    type Output = Self;
+    fn mul(self, rhs: f32) -> Self::Output {
+        Self::new(self.x * rhs, self.y * rhs)
+    }
+}
+
+impl Div<f32> for Point {
+    type Output = Self;
+    fn div(self, rhs: f32) -> Self::Output {
+        Self::new(self.x / rhs, self.y / rhs)
+    }
+}
+
+impl AddAssign for Point {
+    fn add_assign(&mut self, rhs: Self) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+    }
+}
+
+impl SubAssign for Point {
+    fn sub_assign(&mut self, rhs: Self) {
+        self.x -= rhs.x;
+        self.y -= rhs.y;
     }
 }
 
