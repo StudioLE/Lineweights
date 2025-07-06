@@ -6,6 +6,7 @@ mod palette;
 mod point;
 mod scatter;
 mod style;
+mod zoom;
 
 pub(crate) use chart::*;
 pub(super) use dimension::*;
@@ -15,3 +16,4 @@ pub(crate) use palette::*;
 pub(super) use point::*;
 pub(super) use scatter::*;
 pub(super) use style::*;
+pub(crate) use zoom::*;

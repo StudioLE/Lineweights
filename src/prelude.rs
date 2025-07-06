@@ -10,7 +10,7 @@ pub(crate) use crate::statistics::*;
 pub(crate) use crate::table::*;
 pub(crate) use crate::verify::prelude::*;
 pub(crate) use chrono::{Duration, NaiveDate, NaiveTime};
-pub(crate) use dioxus::logger::tracing::{trace, warn};
+pub(crate) use dioxus::logger::tracing::{debug, info, trace, warn};
 pub(crate) use dioxus::prelude::*;
 pub(crate) use regex::Regex;
 pub(crate) use serde::{Deserialize, Serialize};

@@ -20,9 +20,11 @@ impl ChartFactory {
         }
     }
 
-    pub(crate) fn get_viewbox(&self) -> String {
-        let days = self.collection.range.get_total_days() + MARGIN * 2;
-        format!("-{MARGIN} -{MARGIN} {days:.2} {days:.2}")
+    #[allow(clippy::as_conversions, clippy::cast_precision_loss)]
+    pub(crate) fn get_viewbox(&self, zoom: Signal<usize>) -> String {
+        let bounds = self.collection.range.get_total_days() + MARGIN * 2;
+        let viewport = bounds as f32 * Zoom::get_scale(zoom);
+        format!("-{MARGIN} -{MARGIN} {viewport:.2} {viewport:.2}")
     }
 
     pub fn get_weight_scatter(&self) -> Vec<ScatterData> {
