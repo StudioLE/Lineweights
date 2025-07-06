@@ -43,7 +43,8 @@ polyline.sma2, polyline.sma4, polyline.sma8 {{
 }}
 polyline.trend {{
   stroke: {EMERALD_800};
-  stroke-width: 0.75;
+  stroke-width: 0.4;
+  stroke-dasharray: 1.25 0.75;
 }}
 text {{
   fill: {EMERALD_800};
