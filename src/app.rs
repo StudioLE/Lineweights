@@ -14,8 +14,10 @@ pub(super) fn App() -> Element {
     rsx! {
         document::Link { rel: "icon", href: asset!("/assets/favicon.ico") }
         document::Link { rel: "stylesheet", href: asset!("/node_modules/bulma/css/bulma.css") }
+        document::Link { rel: "stylesheet", href: asset!("/node_modules/@fortawesome/fontawesome-free/css/fontawesome.css") }
+        document::Link { rel: "stylesheet", href: asset!("/assets/fonts.css") }
         document::Link { rel: "stylesheet", href: asset!("/assets/app.css") }
-        document::Link { rel: "stylesheet", href: asset!("/node_modules/@fontsource/source-sans-pro/400.css") }
+        Menu {}
         div { class: "container is-max-tablet",
             if *page == Navigation::Import {
                 Import {}
@@ -27,5 +29,6 @@ pub(super) fn App() -> Element {
                 Table {}
             }
         }
+        Menu {}
     }
 }
