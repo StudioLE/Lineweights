@@ -17,18 +17,23 @@ pub(super) fn App() -> Element {
         document::Link { rel: "stylesheet", href: asset!("/node_modules/@fortawesome/fontawesome-free/css/fontawesome.css") }
         document::Link { rel: "stylesheet", href: asset!("/assets/fonts.css") }
         document::Link { rel: "stylesheet", href: asset!("/assets/app.css") }
-        Menu {}
+        FloatingActions {}
         div { class: "container is-max-tablet",
-            if *page == Navigation::Import {
+            if *page == Navigation::Settings {
+                Settings {}
+            }
+            else if *page == Navigation::Import {
                 Import {}
             }
-            if *page == Navigation::Chart {
+            else if *page == Navigation::Chart {
                 Chart {}
             }
-            if *page == Navigation::Table {
+            else if *page == Navigation::Table {
                 Table {}
             }
+            else {
+                "Not Implemented"
+            }
         }
-        Menu {}
     }
 }

@@ -5,6 +5,7 @@ pub(crate) use crate::entries::*;
 pub(crate) use crate::extensions::*;
 pub(crate) use crate::import::*;
 pub(crate) use crate::nav::*;
+pub(crate) use crate::settings::*;
 pub(crate) use crate::state::*;
 pub(crate) use crate::statistics::*;
 pub(crate) use crate::table::*;

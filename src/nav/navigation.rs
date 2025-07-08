@@ -1,6 +1,11 @@
 #[derive(Clone, Debug, PartialEq)]
 pub enum Navigation {
-    Import,
     Chart,
     Table,
+    Add,
+    Settings,
+    Height,
+    Goals,
+    Import,
+    Export,
 }

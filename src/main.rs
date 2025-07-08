@@ -5,6 +5,7 @@ mod extensions;
 mod import;
 mod nav;
 mod prelude;
+mod settings;
 mod state;
 mod statistics;
 mod table;
