@@ -155,10 +155,10 @@ mod tests {
         // Act
         let entries = ShotsyData::to_entries(data);
         // Assert
-        let verified = Verify::new()
+        let expect = Expect::new()
             .values(&entries)
-            .expect("Verify should not fail");
-        assert!(verified);
+            .expect("Expect should not fail");
+        assert!(expect);
     }
 
     #[test]

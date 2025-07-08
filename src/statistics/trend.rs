@@ -59,9 +59,9 @@ mod tests {
         // Act
         let trend = collection.get_trend(7, |x| x.sma1c).unwrap_or_default();
         // Assert
-        let verified = Verify::new()
+        let expect = Expect::new()
             .values(&trend)
-            .expect("Verify should not fail");
-        assert!(verified);
+            .expect("Expect should not fail");
+        assert!(expect);
     }
 }

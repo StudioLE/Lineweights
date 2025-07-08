@@ -41,10 +41,10 @@ mod tests {
         // Act
         let json = entries.to_json_pretty()?;
         // Assert
-        let verified = Verify::new()
+        let expect = Expect::new()
             .string(&json, "json")
-            .expect("Verify should not fail");
-        assert!(verified);
+            .expect("Expect should not fail");
+        assert!(expect);
         Ok(())
     }
 

@@ -111,8 +111,8 @@ mod tests {
         // Act
         let data = factory.get_weight_scatter();
         // Assert
-        let verified = Verify::new().values(&data).expect("Verify should not fail");
-        assert!(verified);
+        let expect = Expect::new().values(&data).expect("Expect should not fail");
+        assert!(expect);
     }
 
     #[test]
@@ -123,10 +123,10 @@ mod tests {
         // Act
         let points = factory.get_trend_points();
         // Assert
-        let verified = Verify::new()
+        let expect = Expect::new()
             .values(&points)
-            .expect("Verify should not fail");
-        assert!(verified);
+            .expect("Expect should not fail");
+        assert!(expect);
     }
 
     #[test]
@@ -137,9 +137,9 @@ mod tests {
         // Act
         let points = factory.get_points_for(|statistics| statistics.sma1c);
         // Assert
-        let verified = Verify::new()
+        let expect = Expect::new()
             .values(&points)
-            .expect("Verify should not fail");
-        assert!(verified);
+            .expect("Expect should not fail");
+        assert!(expect);
     }
 }

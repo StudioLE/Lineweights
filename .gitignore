@@ -1,4 +1,5 @@
 /target
 **/*.rs.bk
 node_modules
-/verify/**/*.received.json
+**/.expect/**/*.actual.json
+**/.expect/**/*.actual.txt

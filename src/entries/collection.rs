@@ -66,10 +66,10 @@ mod tests {
         let collection = EntryCollection::get_sample();
         // Assert
         let statistics: Vec<_> = collection.statistics.into_values().collect();
-        let verified = Verify::new()
+        let expect = Expect::new()
             .values(&statistics)
-            .expect("Verify should not fail");
-        assert!(verified);
+            .expect("Expect should not fail");
+        assert!(expect);
     }
 
     #[test]

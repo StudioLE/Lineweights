@@ -481,6 +481,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "colored"
+version = "3.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fde0e0ec90c9dfb3b4b1a0891a7dcd0e2bffde2f7efed5fe7c9bb00e5bfb915e"
+dependencies = [
+ "windows-sys 0.59.0",
+]
+
+[[package]]
 name = "combine"
 version = "4.6.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1430,6 +1439,17 @@ checksum = "8be9f3dfaaffdae2972880079a491a1a8bb7cbed0b8dd7a347f668b4150a3b93"
 dependencies = [
  "event-listener",
  "pin-project-lite",
+]
+
+[[package]]
+name = "expect"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc8df377a04906625b44d17b45d0ddf4c4fa1449841a3e900c2f5c37e71a8fae"
+dependencies = [
+ "colored",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
@@ -2530,6 +2550,7 @@ dependencies = [
  "chrono",
  "csv",
  "dioxus",
+ "expect",
  "itertools",
  "regex",
  "serde",
