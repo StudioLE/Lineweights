@@ -31,6 +31,9 @@ pub(super) fn App() -> Element {
             else if *page == Navigation::Table {
                 Table {}
             }
+            else if *page == Navigation::Goals {
+                Goals {}
+            }
             else {
                 "Not Implemented"
             }

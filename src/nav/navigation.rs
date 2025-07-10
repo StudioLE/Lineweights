@@ -4,7 +4,6 @@ pub enum Navigation {
     Table,
     Add,
     Settings,
-    Height,
     Goals,
     Import,
     Export,

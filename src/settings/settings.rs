@@ -10,20 +10,11 @@ pub(crate) fn Settings() -> Element {
                 ul { class: "menu-list",
                     li {
                         a {
-                            onclick: move |_| state.page.set(Navigation::Height),
+                            onclick: move |_| state.page.set(Navigation::Goals),
                             span { class: "icon has-text-grey-dark",
                                 i { class: "fa-solid fa-ruler-vertical" }
                             }
-                            span { "Set Height" }
-                        }
-                    }
-                    li {
-                        a {
-                            onclick: move |_| state.page.set(Navigation::Goals),
-                            span { class: "icon has-text-grey-dark",
-                                i { class: "fa-solid fa-bullseye" }
-                            }
-                            span { "Set Goals" }
+                            span { "Set Height, BMI and Goals" }
                         }
                     }
                 }
