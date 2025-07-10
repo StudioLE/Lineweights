@@ -25,3 +25,7 @@
 .buttons .button.is-large {
   border-radius: 1rem
 }
+
+.button[disabled] {
+  cursor: default;
+}
