@@ -8,7 +8,8 @@ use crate::prelude::*;
 /// and autocomplete
 #[component]
 pub(super) fn App() -> Element {
-    use_context_provider(State::from_local_storage);
+    let state = State::init();
+    use_context_provider(|| state);
     let state = use_context::<State>();
     let page = state.page.read();
     rsx! {

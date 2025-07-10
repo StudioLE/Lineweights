@@ -8,29 +8,27 @@ pub struct State {
 }
 
 impl State {
-    pub fn new() -> Self {
+    fn new(collection: EntryCollection, height: Option<f32>, page: Navigation) -> Self {
         Self {
-            entries: Signal::new(EntryCollection::default()),
-            height: Signal::new(None),
-            page: Signal::new(Navigation::Import),
+            entries: use_signal(|| collection),
+            height: use_signal(|| height),
+            page: use_signal(|| page),
         }
     }
 
-    pub fn from_local_storage() -> Self {
-        let Some(entries) = LocalStorage::get_entries()
-            .handle_error(|e| warn!("Failed to get state from local storage: {e:?}"))
-        else {
-            return Self::new();
-        };
-        let Some(collection) = EntryCollection::new(entries)
-            .handle_error(|e| warn!("Failed to determine range: {e:?}"))
-        else {
-            return Self::new();
-        };
-        Self {
-            entries: Signal::new(collection),
-            height: Signal::new(None),
-            page: Signal::new(Navigation::Chart),
+    pub fn init() -> Self {
+        if let Some(state) = Self::from_local_storage() {
+            state
+        } else {
+            Self::new(EntryCollection::default(), None, Navigation::Import)
         }
+    }
+
+    fn from_local_storage() -> Option<Self> {
+        let entries = LocalStorage::get_entries()
+            .handle_error(|e| warn!("Failed to get entries from local storage: {e:?}"))?;
+        let collection = EntryCollection::new(entries)
+            .handle_error(|e| warn!("Failed to determine range: {e:?}"))?;
+        Some(Self::new(collection, None, Navigation::Chart))
     }
 }
