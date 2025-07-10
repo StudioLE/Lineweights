@@ -7,27 +7,6 @@ pub struct Entry {
     pub shot: Option<Shot>,
 }
 
-impl Entry {
-    pub(crate) fn from_json(json: &str) -> serde_json::Result<Vec<Entry>> {
-        serde_json::from_str(json)
-    }
-}
-
-pub(crate) trait EntryExtensions {
-    fn to_json(self) -> serde_json::Result<String>;
-    #[allow(dead_code)]
-    fn to_json_pretty(self) -> serde_json::Result<String>;
-}
-
-impl EntryExtensions for &[Entry] {
-    fn to_json(self) -> serde_json::Result<String> {
-        serde_json::to_string(self)
-    }
-    fn to_json_pretty(self) -> serde_json::Result<String> {
-        serde_json::to_string_pretty(self)
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -39,7 +18,7 @@ mod tests {
         let data = ShotsyData::from_csv(csv);
         let entries = ShotsyData::to_entries(data);
         // Act
-        let json = entries.to_json_pretty()?;
+        let json = serde_json::to_string_pretty(&entries)?;
         // Assert
         let expect = Expect::new()
             .string(&json, "json")
@@ -53,7 +32,7 @@ mod tests {
         // Arrange
         let json = include_str!("../../samples/entries.json");
         // Act
-        let entries = Entry::from_json(json)?;
+        let entries: Vec<Entry> = serde_json::from_str(json)?;
         // Assert
         assert_eq!(entries.len(), 144);
         Ok(())

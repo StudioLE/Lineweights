@@ -51,7 +51,7 @@ impl EntryCollection {
     #[cfg(test)]
     pub fn get_sample() -> EntryCollection {
         let json = include_str!("../../samples/entries.json");
-        let entries = Entry::from_json(json).expect("Entries sample should be valid");
+        let entries = serde_json::from_str(json).expect("Entries sample should be valid");
         EntryCollection::new(entries).expect("Range should be valid")
     }
 }
