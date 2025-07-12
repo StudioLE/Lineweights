@@ -5,6 +5,7 @@ use web_sys::{window, Storage};
 use LocalStorageError::*;
 
 const ENTRIES_KEY: &str = "entries";
+const HEIGHT_KEY: &str = "height";
 
 pub struct LocalStorage;
 
@@ -15,6 +16,14 @@ impl LocalStorage {
 
     pub fn set_entries(entries: &[Entry]) -> Result<(), LocalStorageError> {
         set_value(ENTRIES_KEY, entries)
+    }
+
+    pub fn get_height() -> Result<f32, LocalStorageError> {
+        get_value(HEIGHT_KEY)
+    }
+
+    pub fn set_height(height: f32) -> Result<(), LocalStorageError> {
+        set_value(HEIGHT_KEY, &height)
     }
 }
 

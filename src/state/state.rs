@@ -29,6 +29,8 @@ impl State {
             .handle_error(|e| warn!("Failed to get entries from local storage: {e:?}"))?;
         let collection = EntryCollection::new(entries)
             .handle_error(|e| warn!("Failed to determine range: {e:?}"))?;
-        Some(Self::new(collection, None, Navigation::Chart))
+        let height = LocalStorage::get_height()
+            .handle_error(|e| warn!("Failed to get height from local storage: {e:?}"));
+        Some(Self::new(collection, height, Navigation::Chart))
     }
 }

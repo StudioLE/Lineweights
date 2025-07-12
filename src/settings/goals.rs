@@ -4,6 +4,16 @@ use crate::prelude::*;
 pub(crate) fn Goals() -> Element {
     let state = use_context::<State>();
     let is_height_valid = use_signal(|| true);
+    let height_value = use_signal(|| {
+        state
+            .height
+            .read()
+            .as_ref()
+            .map(|height| (height * 100.0).to_string())
+            .unwrap_or_default()
+    });
+
+    // Calculate BMI values
     let mut recommended = None;
     let mut healthy = None;
     let mut overwight = None;
@@ -21,6 +31,7 @@ pub(crate) fn Goals() -> Element {
             BodyMassIndex::OVERWEIGHT,
         ));
     }
+
     rsx! {
         section { class: "section is-medium",
             section { class: "section",
@@ -30,10 +41,13 @@ pub(crate) fn Goals() -> Element {
                     div { class: "field has-addons",
                         p { class: "control",
                             input {
-                                oninput: move |e| set_height(e, state.height, is_height_valid),
+                                oninput: move |e| {
+                                    set_height(e, height_value, state.height, is_height_valid);
+                                },
                                 class: if !*is_height_valid.read() { "input is-danger" } else { "input"},
                                 r#type: "text",
-                                placeholder: "Example: 162"
+                                placeholder: "Example: 162",
+                                value: height_value
                             }
                         }
                         p { class: "control",
@@ -111,12 +125,15 @@ pub(crate) fn Goals() -> Element {
 
 fn set_height(
     event: Event<FormData>,
-    mut height: Signal<Option<f32>>,
+    mut input: Signal<String>,
+    mut state: Signal<Option<f32>>,
     mut is_height_valid: Signal<bool>,
 ) {
     event.prevent_default();
-    let Some(cm) = event.value().parse::<f32>().handle_error(|e| {
-        warn!("Failed to parse height from `{}`: {e}", event.value());
+    let value = event.value();
+    input.set(value.clone());
+    let Some(cm) = value.parse::<f32>().handle_error(|e| {
+        warn!("Failed to parse height from `{value}`: {e}");
         is_height_valid.set(false);
     }) else {
         return;
@@ -126,7 +143,9 @@ fn set_height(
         is_height_valid.set(false);
         return;
     }
-    height.set(Some(cm / 100.0));
+    let height = cm / 100.0;
+    state.set(Some(height));
+    LocalStorage::set_height(height).handle_error(|e| warn!("Failed to set height: {e:?}"));
     is_height_valid.set(true);
 }
 
