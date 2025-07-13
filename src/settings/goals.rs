@@ -41,7 +41,7 @@ pub(crate) fn Goals() -> Element {
                                         class: "input",
                                         disabled: true,
                                         r#type: "text",
-                                        value: display_weight(recommended)
+                                        value: display_weight("~", recommended)
                                     }
                                 }
                                 p { class: "control",
@@ -49,7 +49,6 @@ pub(crate) fn Goals() -> Element {
                                 }
                             }
                         }
-
                     }
                     div { class: "column",
                         div { class: "field",
@@ -60,7 +59,7 @@ pub(crate) fn Goals() -> Element {
                                         class: "input",
                                         disabled: true,
                                         r#type: "text",
-                                        value: display_weight(healthy)
+                                        value: display_weight("<", healthy)
                                     }
                                 }
                                 p { class: "control",
@@ -78,7 +77,7 @@ pub(crate) fn Goals() -> Element {
                                         class: "input",
                                         disabled: true,
                                         r#type: "text",
-                                        value: display_weight(overwight)
+                                        value: display_weight("<", overwight)
                                     }
                                 }
                                 p { class: "control",
@@ -93,9 +92,9 @@ pub(crate) fn Goals() -> Element {
     }
 }
 
-fn display_weight(weight: Option<f32>) -> String {
+fn display_weight(prefix: &str, weight: Option<f32>) -> String {
     if let Some(weight) = weight {
-        format!("{weight:.1}")
+        format!("{prefix} {weight:.1}")
     } else {
         String::new()
     }
