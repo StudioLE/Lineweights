@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 const KEY: &str = "height";
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub struct HeightState {
     /// Height in meters
     ///
