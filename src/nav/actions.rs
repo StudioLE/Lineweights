@@ -2,14 +2,13 @@ use crate::prelude::*;
 
 #[component]
 pub(crate) fn FloatingActions() -> Element {
-    let mut state = use_context::<State>();
-    let page = state.page.read();
+    let mut state: NavigationState = use_context();
     rsx! {
         div { class: "fullscreen",
             div { class: "buttons",
                 button { class: "button is-primary",
-                    disabled: *page == Navigation::Settings,
-                    onclick: move |_| state.page.set(Navigation::Settings),
+                    disabled: state.is_active(Navigation::Settings),
+                    onclick: move |_| state.set(Navigation::Settings),
                     span {
                         class: "icon",
                         i {
@@ -18,8 +17,8 @@ pub(crate) fn FloatingActions() -> Element {
                     }
                 }
                 button { class: "button is-primary",
-                    disabled: *page == Navigation::Chart,
-                    onclick: move |_| state.page.set(Navigation::Chart),
+                    disabled: state.is_active(Navigation::Chart),
+                    onclick: move |_| state.set(Navigation::Chart),
                     span {
                         class: "icon",
                         i {
@@ -28,8 +27,8 @@ pub(crate) fn FloatingActions() -> Element {
                     }
                 }
                 button { class: "button is-primary",
-                    disabled: *page == Navigation::Table,
-                    onclick: move |_| state.page.set(Navigation::Table),
+                    disabled: state.is_active(Navigation::Table),
+                    onclick: move |_| state.set(Navigation::Table),
                     span {
                         class: "icon",
                         i {
@@ -38,8 +37,8 @@ pub(crate) fn FloatingActions() -> Element {
                     }
                 }
                 button { class: "button is-primary is-large",
-                    disabled: *page == Navigation::Add,
-                    onclick: move |_| state.page.set(Navigation::Add),
+                    disabled: state.is_active(Navigation::Add),
+                    onclick: move |_| state.set(Navigation::Add),
                     span {
                         class: "icon",
                         i {

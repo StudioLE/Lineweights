@@ -2,8 +2,8 @@ use crate::prelude::*;
 
 #[component]
 pub fn Chart() -> Element {
-    let state = use_context::<State>();
-    let collection = state.entries.read().to_owned();
+    let state = use_context::<EntryState>();
+    let collection = state.get_cloned();
     let view = use_signal(|| View::new(&collection.range));
     let drag = use_signal(DragAction::default);
     let factory = ChartFactory::new(collection);

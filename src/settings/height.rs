@@ -2,17 +2,9 @@ use crate::prelude::*;
 
 #[component]
 pub(crate) fn Height() -> Element {
-    let state = use_context::<State>();
+    let state: HeightState = use_context();
     let is_height_valid = use_signal(|| true);
-    let height_value = use_signal(|| {
-        state
-            .height
-            .read()
-            .as_ref()
-            .map(|height| (height * 100.0).to_string())
-            .unwrap_or_default()
-    });
-
+    let height_value = use_signal(|| state.get_cm_string());
     rsx! {
         div { class: "field",
             label { class: "label", "Height" }
@@ -20,7 +12,7 @@ pub(crate) fn Height() -> Element {
                 p { class: "control",
                     input {
                         oninput: move |e| {
-                            set_height(e, height_value, state.height, is_height_valid);
+                            oninput(e, height_value, state.clone(), is_height_valid);
                         },
                         class: if !*is_height_valid.read() { "input is-danger" } else { "input"},
                         r#type: "text",
@@ -39,28 +31,33 @@ pub(crate) fn Height() -> Element {
     }
 }
 
-fn set_height(
+fn oninput(
     event: Event<FormData>,
     mut input: Signal<String>,
-    mut state: Signal<Option<f32>>,
+    state: HeightState,
     mut is_height_valid: Signal<bool>,
 ) {
     event.prevent_default();
-    let value = event.value();
-    input.set(value.clone());
-    let Some(cm) = value.parse::<f32>().handle_error(|e| {
-        warn!("Failed to parse height from `{value}`: {e}");
-        is_height_valid.set(false);
-    }) else {
-        return;
+    let input_value = event.value();
+    input.set(input_value.clone());
+    match parse_input(input_value) {
+        Ok(height) => {
+            state.set(Some(height));
+            is_height_valid.set(true);
+        }
+        Err(_) => {
+            state.set(None);
+            is_height_valid.set(false);
+        }
+    }
+}
+
+pub fn parse_input(input: String) -> Result<f32, String> {
+    let Ok(cm) = input.parse::<f32>() else {
+        return Err("Height must be a number".to_owned());
     };
     if !(50.0..=300.0).contains(&cm) {
-        warn!("Height must be between 50 and 300 cm: {cm}");
-        is_height_valid.set(false);
-        return;
+        return Err("Height must be between 50 and 300 cm".to_owned());
     }
-    let height = cm / 100.0;
-    state.set(Some(height));
-    LocalStorage::set_height(height).handle_error(|e| warn!("Failed to set height: {e:?}"));
-    is_height_valid.set(true);
+    Ok(cm / 100.0)
 }

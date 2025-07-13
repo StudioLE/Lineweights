@@ -5,26 +5,8 @@ use ImportError::*;
 #[allow(clippy::absolute_paths)]
 #[component]
 pub fn Import() -> Element {
-    let mut state = use_context::<State>();
-    let on_file_changed = move |event| async move {
-        let Some(csv) = read_file(event)
-            .await
-            .handle_error(|e| warn!("Failed to read file: {e:?}"))
-        else {
-            return;
-        };
-        let data = ShotsyData::from_csv(&csv);
-        let entries = ShotsyData::to_entries(data);
-        let _ = LocalStorage::set_entries(&entries)
-            .handle_error(|e| warn!("Failed to write to local storage: {e:?}"));
-        let Some(collection) = EntryCollection::new(entries)
-            .handle_error(|e| warn!("Failed to determine range: {e:?}"))
-        else {
-            return;
-        };
-        state.entries.set(collection);
-        state.page.set(Navigation::Chart);
-    };
+    let state: EntryState = use_context();
+    let nav: NavigationState = use_context();
     rsx! {
         section { class: "section",
             h1 { class: "title", "Import data from Shotsy" }
@@ -46,7 +28,7 @@ pub fn Import() -> Element {
                         r#type: "file",
                         accept: ".csv",
                         multiple: false,
-                        onchange: on_file_changed
+                        onchange: move |event| onchange(event, state, nav),
                     }
                     span { class: "file-cta",
                         span { class: "file-label", " Choose a file… " }
@@ -55,6 +37,24 @@ pub fn Import() -> Element {
             }
         }
     }
+}
+
+async fn onchange(event: Event<FormData>, mut state: EntryState, mut nav: NavigationState) {
+    let Some(csv) = read_file(event)
+        .await
+        .handle_error(|e| warn!("Failed to read file: {e:?}"))
+    else {
+        return;
+    };
+    let data = ShotsyData::from_csv(&csv);
+    let entries = ShotsyData::to_entries(data);
+    let Some(collection) =
+        EntryCollection::new(entries).handle_error(|e| warn!("Failed to determine range: {e:?}"))
+    else {
+        return;
+    };
+    state.set(collection);
+    nav.set(Navigation::Chart);
 }
 
 async fn read_file(evt: Event<FormData>) -> Result<String, ImportError> {

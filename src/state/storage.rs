@@ -4,40 +4,21 @@ use web_sys::wasm_bindgen::JsValue;
 use web_sys::{window, Storage};
 use LocalStorageError::*;
 
-const ENTRIES_KEY: &str = "entries";
-const HEIGHT_KEY: &str = "height";
-
 pub struct LocalStorage;
 
 impl LocalStorage {
-    pub fn get_entries() -> Result<Vec<Entry>, LocalStorageError> {
-        get_value(ENTRIES_KEY)
+    pub fn get<T: DeserializeOwned>(key: &str) -> Result<T, LocalStorageError> {
+        let serialized = get_local_storage()?
+            .get_item(key)
+            .map_err(Js)?
+            .ok_or(NoData)?;
+        serde_json::from_str(&serialized).map_err(Deserialization)
     }
 
-    pub fn set_entries(entries: &[Entry]) -> Result<(), LocalStorageError> {
-        set_value(ENTRIES_KEY, entries)
+    pub fn set<T: Serialize + ?Sized>(key: &str, value: &T) -> Result<(), LocalStorageError> {
+        let serialized = serde_json::to_string(value).map_err(Serialization)?;
+        get_local_storage()?.set_item(key, &serialized).map_err(Js)
     }
-
-    pub fn get_height() -> Result<f32, LocalStorageError> {
-        get_value(HEIGHT_KEY)
-    }
-
-    pub fn set_height(height: f32) -> Result<(), LocalStorageError> {
-        set_value(HEIGHT_KEY, &height)
-    }
-}
-
-fn get_value<T: DeserializeOwned>(key: &str) -> Result<T, LocalStorageError> {
-    let serialized = get_local_storage()?
-        .get_item(key)
-        .map_err(Js)?
-        .ok_or(NoData)?;
-    serde_json::from_str(&serialized).map_err(Deserialization)
-}
-
-fn set_value<T: Serialize + ?Sized>(key: &str, value: &T) -> Result<(), LocalStorageError> {
-    let serialized = serde_json::to_string(value).map_err(Serialization)?;
-    get_local_storage()?.set_item(key, &serialized).map_err(Js)
 }
 
 fn get_local_storage() -> Result<Storage, LocalStorageError> {

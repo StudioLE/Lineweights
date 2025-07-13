@@ -5,8 +5,8 @@ use itertools::Itertools;
 #[allow(clippy::absolute_paths)]
 #[component]
 pub fn Table() -> Element {
-    let state = use_context::<State>();
-    let collection = state.entries.read().to_owned();
+    let state = use_context::<EntryState>();
+    let collection = state.get_cloned();
     let chunks = collection
         .entries
         .into_values()

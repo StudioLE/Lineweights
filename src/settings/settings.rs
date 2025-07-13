@@ -2,7 +2,7 @@ use crate::prelude::*;
 
 #[component]
 pub(crate) fn Settings() -> Element {
-    let mut state = use_context::<State>();
+    let mut state: NavigationState = use_context();
     rsx! {
         section { class: "section is-medium",
             aside { class: "menu",
@@ -10,7 +10,7 @@ pub(crate) fn Settings() -> Element {
                 ul { class: "menu-list",
                     li {
                         a {
-                            onclick: move |_| state.page.set(Navigation::Goals),
+                            onclick: move |_| state.set(Navigation::Goals),
                             span { class: "icon has-text-grey-dark",
                                 i { class: "fa-solid fa-ruler-vertical" }
                             }
@@ -22,7 +22,7 @@ pub(crate) fn Settings() -> Element {
                 ul { class: "menu-list",
                     li {
                         a {
-                            onclick: move |_| state.page.set(Navigation::Import),
+                            onclick: move |_| state.set(Navigation::Import),
                             span { class: "icon has-text-grey-dark",
                                 i { class: "fa-solid fa-upload" }
                             }
@@ -31,7 +31,7 @@ pub(crate) fn Settings() -> Element {
                     }
                     li {
                         a {
-                            onclick: move |_| state.page.set(Navigation::Export),
+                            onclick: move |_| state.set(Navigation::Export),
                             span { class: "icon has-text-grey-dark",
                                 i { class: "fa-solid fa-download" }
                             }

@@ -8,10 +8,8 @@ use crate::prelude::*;
 /// and autocomplete
 #[component]
 pub(super) fn App() -> Element {
-    let state = State::init();
-    use_context_provider(|| state);
-    let state = use_context::<State>();
-    let page = state.page.read();
+    init_contexts();
+    let nav: NavigationState = use_context();
     rsx! {
         document::Link { rel: "icon", href: asset!("/assets/favicon.ico") }
         document::Link { rel: "stylesheet", href: asset!("/node_modules/bulma/css/bulma.css") }
@@ -20,19 +18,19 @@ pub(super) fn App() -> Element {
         document::Link { rel: "stylesheet", href: asset!("/assets/app.css") }
         FloatingActions {}
         div { class: "container is-max-tablet",
-            if *page == Navigation::Settings {
+            if nav.is_active(Navigation::Settings) {
                 Settings {}
             }
-            else if *page == Navigation::Import {
+            else if nav.is_active(Navigation::Import) {
                 Import {}
             }
-            else if *page == Navigation::Chart {
+            else if nav.is_active(Navigation::Chart) {
                 Chart {}
             }
-            else if *page == Navigation::Table {
+            else if nav.is_active(Navigation::Table) {
                 Table {}
             }
-            else if *page == Navigation::Goals {
+            else if nav.is_active(Navigation::Goals) {
                 Goals {}
             }
             else {
@@ -40,4 +38,14 @@ pub(super) fn App() -> Element {
             }
         }
     }
+}
+
+fn init_contexts() {
+    let entries = EntryState::init();
+    let is_entries_empty = entries.is_empty();
+    use_context_provider(|| entries);
+    let nav = NavigationState::init(is_entries_empty);
+    use_context_provider(|| nav);
+    let height = HeightState::init();
+    use_context_provider(|| height);
 }

@@ -2,13 +2,13 @@ use crate::prelude::*;
 
 #[component]
 pub(crate) fn Goals() -> Element {
-    let state = use_context::<State>();
+    let state: HeightState = use_context();
 
     // Calculate BMI values
     let mut recommended = None;
     let mut healthy = None;
     let mut overwight = None;
-    if let Some(height) = *state.height.read() {
+    if let Some(height) = state.get() {
         recommended = Some(BodyMassIndex::weight_from_height_bmi(
             height,
             BodyMassIndex::CENTER,
