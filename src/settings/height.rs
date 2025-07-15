@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+const NBSP: char = '\u{00A0}';
+
 #[derive(Copy, Clone)]
 struct FieldState {
     /// Global height context
@@ -31,6 +33,10 @@ impl FieldState {
         } else {
             "input is-danger".to_owned()
         }
+    }
+
+    fn get_message(&self) -> String {
+        self.message.read().clone().unwrap_or_default()
     }
 
     fn oninput(&mut self, event: Event<FormData>) {
@@ -70,8 +76,10 @@ pub(crate) fn Height() -> Element {
                     a { class: "button is-static", "cm" }
                 }
             }
-            if !state.is_valid() {
-                p { class: "help is-danger", "Height must be a number" }
+            if state.is_valid() {
+                p { class: "help", dangerous_inner_html: "{NBSP}" }
+            } else {
+                p { class: "help is-danger", "{state.get_message()}" }
             }
         }
     }
