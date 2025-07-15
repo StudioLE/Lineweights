@@ -17,7 +17,7 @@ impl NavigationState {
     }
 
     pub fn get(&self) -> Navigation {
-        self.signal.read().clone()
+        *self.signal.read()
     }
 
     pub fn set(&mut self, value: Navigation) {

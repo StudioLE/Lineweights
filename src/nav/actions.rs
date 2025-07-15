@@ -2,51 +2,52 @@ use crate::prelude::*;
 
 #[component]
 pub(crate) fn FloatingActions() -> Element {
-    let mut state: NavigationState = use_context();
+    let state: NavigationState = use_context();
+    let actions = [
+        Navigation::Settings,
+        Navigation::Chart,
+        Navigation::Table,
+        Navigation::Add,
+    ];
+    let actions: Vec<_> = actions
+        .into_iter()
+        .filter(|&action| !state.is_active(action))
+        .enumerate()
+        .collect();
+    let last = actions.len() - 1;
     rsx! {
         div { class: "fullscreen",
             div { class: "buttons",
-                button { class: "button is-primary",
-                    disabled: state.is_active(Navigation::Settings),
-                    onclick: move |_| state.set(Navigation::Settings),
-                    span {
-                        class: "icon",
-                        i {
-                            class: "fa-solid fa-gear"
-                        }
-                    }
-                }
-                button { class: "button is-primary",
-                    disabled: state.is_active(Navigation::Chart),
-                    onclick: move |_| state.set(Navigation::Chart),
-                    span {
-                        class: "icon",
-                        i {
-                            class: "fa-solid fa-chart-line"
-                        }
-                    }
-                }
-                button { class: "button is-primary",
-                    disabled: state.is_active(Navigation::Table),
-                    onclick: move |_| state.set(Navigation::Table),
-                    span {
-                        class: "icon",
-                        i {
-                            class: "fa-solid fa-table"
-                        }
-                    }
-                }
-                button { class: "button is-primary is-large",
-                    disabled: state.is_active(Navigation::Add),
-                    onclick: move |_| state.set(Navigation::Add),
-                    span {
-                        class: "icon",
-                        i {
-                            class: "fa-solid fa-plus fa-lg"
-                        }
-                    }
+                for (i, action) in actions.into_iter() {
+                    FloatingAction {
+                        action,
+                        is_large: i == last
+                    },
                 }
             }
         }
     }
+}
+
+#[component]
+fn FloatingAction(action: Navigation, is_large: bool) -> Element {
+    let mut state: NavigationState = use_context();
+    rsx! {
+        button {
+            class: get_button_classes(is_large),
+            onclick: move |_| state.set(action),
+            span {
+                class: "icon",
+                i { class: action.get_icon_classes() }
+            }
+        }
+    }
+}
+
+fn get_button_classes(is_large: bool) -> String {
+    let mut output = "button is-primary".to_owned();
+    if is_large {
+        output.push_str(" is-large");
+    }
+    output
 }
