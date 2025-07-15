@@ -18,6 +18,7 @@ pub(super) fn App() -> Element {
         document::Link { rel: "stylesheet", href: asset!("/assets/app.css") }
         FloatingActions {}
         div { class: "container is-max-tablet",
+            Header {}
             if nav.is_active(Navigation::Settings) {
                 Settings {}
             }

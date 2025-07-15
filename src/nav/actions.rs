@@ -3,12 +3,7 @@ use crate::prelude::*;
 #[component]
 pub(crate) fn FloatingActions() -> Element {
     let state: NavigationState = use_context();
-    let actions = [
-        Navigation::Settings,
-        Navigation::Chart,
-        Navigation::Table,
-        Navigation::Add,
-    ];
+    let actions = [Navigation::Settings, Navigation::Add];
     let actions: Vec<_> = actions
         .into_iter()
         .filter(|&action| !state.is_active(action))
