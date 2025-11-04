@@ -11,7 +11,7 @@ jobs:
 
   ci-cd:
     name: CI/CD
-    uses: StudioLE/Actions/.github/workflows/rust-ci-cd.yml@v7
+    uses: StudioLE/Actions/.github/workflows/ci-cd-dioxus-web.yml@v7
     with:
       dioxus_web_name: lineweights
       dioxus_web_artifact: WebAssembly
