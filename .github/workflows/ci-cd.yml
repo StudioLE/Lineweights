@@ -13,8 +13,8 @@ jobs:
     name: CI/CD
     uses: StudioLE/Actions/.github/workflows/rust-ci-cd.yml@v7
     with:
-      dioxus_name: lineweights
-      dioxus_artifact: WebAssembly
-      dioxus_repo: StudioLE/LineweightsWeb
+      dioxus_web_name: lineweights
+      dioxus_web_artifact: WebAssembly
+      dioxus_web_repo: StudioLE/LineweightsWeb
     secrets:
-      dioxus_repo_token: ${{ secrets.WEB_REPO_TOKEN }}
+      dioxus_web_repo_token: ${{ secrets.WEB_REPO_TOKEN }}
