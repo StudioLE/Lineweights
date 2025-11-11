@@ -13,8 +13,8 @@ jobs:
     name: CI/CD
     uses: StudioLE/Actions/.github/workflows/ci-cd-dioxus-web.yml@v7
     with:
-      dioxus_web_name: lineweights
-      dioxus_web_artifact: WebAssembly
-      dioxus_web_repo: StudioLE/LineweightsWeb
+      package_name: lineweights
+      dioxus_version: 0.6.3
+      web_repo_name: StudioLE/LineweightsWeb
     secrets:
-      dioxus_web_repo_token: ${{ secrets.WEB_REPO_TOKEN }}
+      web_repo_token: ${{ secrets.WEB_REPO_TOKEN }}
